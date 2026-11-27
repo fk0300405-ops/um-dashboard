@@ -1,0 +1,194 @@
+/* V28 report and dashboard polish; conditional colours remain workbook-driven. */
+:root{--nav:#102f46;--blue:#16638e;--line:#cfdce5;--bg:#edf3f7;--ink:#172e41}
+@media screen{
+ html:not(.report-mode) .sidebar .brandmark{width:65px;height:56px;flex-basis:65px;border-radius:5px;padding:5px}
+ html:not(.report-mode) .sidebar .brandmark img{width:53px;height:auto;max-width:100%;object-fit:contain}
+ html:not(.report-mode) .top{border-top:3px solid #14638d;border-radius:7px 7px 0 0;padding:20px 22px}
+ html:not(.report-mode) .panel,html:not(.report-mode) .machine-card{border-color:#d0dfe8;border-radius:7px;box-shadow:0 2px 8px rgba(19,52,77,.045)}
+ html:not(.report-mode) .panelhead{padding-bottom:9px;border-bottom:1px solid #e5edf2}
+ html:not(.report-mode) .nav button{transition:background-color .18s,color .18s,border-color .18s;letter-spacing:.05px}
+ html:not(.report-mode) .nav button.active{background:#205a7a;border-left-color:#76c7ef}
+ html:not(.report-mode) .actions .btn{transition:background-color .18s,border-color .18s,box-shadow .18s;min-height:43px}
+ html:not(.report-mode) .section.active{animation:report-entrance .22s ease-out both}
+ @keyframes report-entrance{from{opacity:.78;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+ #exportButton{min-width:136px}#exportButton[aria-busy=true] .export-icon{animation:export-pulse 1s ease-in-out infinite alternate}
+ @keyframes export-pulse{from{opacity:.5}to{opacity:1}}
+ #exportNotice{margin:-10px 0 14px;padding:9px 12px;border:1px solid #cfdee9;background:#f6fafc;font-size:12px;color:#315b75;border-radius:4px;overflow-wrap:anywhere}
+ #exportNotice[data-kind=error]{background:#fff2f2;border-color:#eac4c4;color:#9c0006}#exportNotice[data-kind=ready]{background:#eef8f0;border-color:#c5dfcc;color:#086c32}
+ @media(max-width:700px){html:not(.report-mode) .sidebar .brandmark{width:45px;height:38px;flex-basis:45px;padding:3px}html:not(.report-mode) .sidebar .brandmark img{width:37px}html:not(.report-mode) .top{padding:14px 13px}#exportButton{min-width:0}html:not(.report-mode) .panelhead{padding-bottom:6px}}
+ @media(min-width:701px) and (max-height:660px){html:not(.report-mode) .sidebar .brandmark{width:48px;height:42px;flex-basis:48px;padding:3px}html:not(.report-mode) .sidebar .brandmark img{width:40px}}
+}
+@media(prefers-reduced-motion:reduce){html:not(.report-mode) .section.active,#exportButton[aria-busy=true] .export-icon{animation:none!important}html:not(.report-mode) .nav button,html:not(.report-mode) .actions .btn{transition:none!important}}
+/* Full report rendering, independent of the user's viewport or active tab. */
+.report-mode body{margin:0;background:white;color:#17354d;font-family:'Segoe UI',Arial,sans-serif;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.report-mode .sidebar,.report-mode .top,.report-mode .stamp,.report-mode .mobile-guide,.report-mode .app-footer,.report-mode #exportNotice,.report-mode .toolbar,.report-mode .fi-view{display:none!important}
+.report-mode .shell,.report-mode .main{display:block!important;position:static!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;min-height:0!important;overflow:visible!important}
+.report-mode .section.report-visible{display:block!important;animation:none!important;width:100%!important;max-width:none!important}
+.report-mode *, .report-mode *::before,.report-mode *::after{animation:none!important;transition:none!important}
+.report-mode .panel,.report-mode .machine-card,.report-mode .card{box-shadow:none!important;border:1px solid #cfdce5;border-radius:5px}
+.report-mode .panel{padding:13px 15px;margin-bottom:10px}
+.report-mode .kpi-panel,.report-mode .pm-detail-panel{padding:0}
+.report-mode .panelhead{margin-bottom:8px}.report-mode .panel h2{font-size:16px}.report-mode .hint{font-size:11px}
+.report-mode .cards{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:10px;gap:9px}
+.report-mode .card{padding:10px 13px}.report-mode .card .value{font-size:23px;margin:4px 0}.report-mode .card .foot{font-size:11px}
+.report-mode .export-page{display:block;break-before:page;page-break-before:always;box-sizing:border-box;min-width:0;width:100%;margin:0;padding:0}
+.report-mode .export-page:first-child{break-before:auto;page-break-before:auto}
+.report-mode .export-page-title{display:flex;align-items:center;gap:16px;padding:8px 0 12px;margin:0 0 12px;border-bottom:3px solid #17648c;break-after:avoid;page-break-after:avoid}
+.report-mode .export-page-title img{width:73px;height:auto;object-fit:contain}
+.report-mode .export-company{font-size:10px;letter-spacing:1.3px;color:#286389;font-weight:700}
+.report-mode .export-page-title h1{font-size:25px;line-height:1.15;margin:4px 0;color:#163c56}
+.report-mode .export-page-title p{font-size:12px;color:#52687a;margin:0}
+.report-mode .unified-matrix th,.report-mode .unified-matrix td{font-size:11.5px!important;padding:7px 3px!important;position:static!important}
+.report-mode .unified-matrix .matrix-goal{font-size:12px!important;white-space:normal!important}
+.report-mode .unified-matrix thead{display:table-header-group!important}
+.report-mode table tr{break-inside:avoid;page-break-inside:avoid}
+.report-mode .chartbox.export-vector{height:auto!important;overflow:visible}.report-mode .export-vector svg{display:block;width:100%;height:auto}
+.report-mode .reliability-plot svg{display:block;max-height:280px;width:100%;height:auto}
+.report-mode .pm-ring-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.report-mode .pm-ring-item{padding:8px 10px}.report-mode .pm-ring-svg{max-width:128px}.report-mode .pm-ring-counts{font-size:11px}.report-mode .pm-ring-counts b{font-size:13px}
+.report-mode .pm-compare-table th,.report-mode .pm-compare-table td{font-size:11px!important}
+.report-mode .class-perf-chart{padding:7px 10px;margin:0 0 7px;break-inside:avoid;page-break-inside:avoid}
+.report-mode .class-perf-chart h5{font-size:14px}.report-mode .class-perf-chart p{font-size:10px;margin:3px 0}
+.report-mode .class-perf-charts{gap:5px}.report-mode .class-performance{margin-top:8px;padding-top:6px}.report-mode .class-performance-header{margin-bottom:5px}
+.report-mode .class-plot svg{width:100%!important;height:auto!important;max-height:190px!important;min-width:0!important}
+.report-mode .class-perf-legend{margin:3px 0;font-size:10.5px}
+.report-mode .machine-card{padding:10px 13px}.report-mode .machine-owner{margin-bottom:5px}.report-mode .machine-owner img{width:42px;height:42px}.report-mode .machine-metrics{margin:6px 0;gap:8px}.report-mode .machine-metric{padding:6px 9px}.report-mode .machine-metric b{font-size:14px}
+.report-mode .machine-incidents{margin:0;padding:0;border:0}.report-mode .incident-grid{align-items:start;gap:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.report-mode .incident-column{display:block}.report-mode .incident-card{margin-bottom:9px;break-inside:avoid;page-break-inside:avoid}.report-mode .incident-card td,.report-mode .incident-card th{font-size:11.5px!important;line-height:1.3;padding:4px 6px!important}.report-mode .incident-card .rca-field-table th{width:24%}.report-mode .incident-pareto{break-inside:avoid;page-break-inside:avoid}.report-mode .incident-pareto svg{max-height:260px!important;width:100%;height:auto}
+.report-mode .export-brand-footer img{width:100%;height:auto;max-width:100%;display:block}.report-mode .export-brand-footer{margin-top:12px}
+.report-mode .export-page[data-report-section=waste]>.class-perf-chart{margin-bottom:10px}
+.report-mode .export-page[data-report-section=waste] .class-plot svg{max-height:185px!important}
+.report-mode .panel,.report-mode .pm-ring-panel,.report-mode .chartbox,.report-mode .reliability-plot{break-inside:avoid;page-break-inside:avoid}
+.report-mode .export-machine-page .machine-card,.report-mode .export-incident-page .machine-incidents{break-inside:auto;page-break-inside:auto}
+@media print{.report-mode .export-page{break-before:page}.report-mode .export-page:first-child{break-before:auto}}
+/* Tight, full-width plots in the exported deck: one machine's 3 metrics per page. */
+.report-mode .export-page-title{padding:3px 0 8px;margin-bottom:9px;gap:13px}
+.report-mode .export-page-title img{width:61px}
+.report-mode .export-page-title h1{font-size:23px;margin:3px 0}
+.report-mode .export-machine-page .class-plot{display:block!important;height:160px!important;min-height:0!important;max-height:none!important}
+.report-mode .export-machine-page .class-plot svg{height:160px!important;max-height:160px!important}
+.report-mode .export-machine-page .class-perf-chart{padding:5px 9px;margin-bottom:4px}
+.report-mode .export-machine-page .class-perf-chart header{margin:0 0 2px;align-items:center}
+.report-mode .export-machine-page .class-rating{padding:3px 7px;line-height:1.2;font-size:11px;display:flex;align-items:center;gap:6px}
+.report-mode .export-machine-page .class-rating small{font-size:9px;margin:0}
+.report-mode .export-machine-page .class-perf-legend{margin:2px 0;font-size:10px}
+.report-mode .export-machine-page .class-perf-chart p{margin:2px 0;line-height:1.2}
+.report-mode .export-machine-page .class-performance{margin-top:5px;padding-top:5px}
+.report-mode .export-machine-page .class-perf-charts{gap:4px}
+.report-mode .export-page[data-report-section=waste] .class-plot svg{max-height:155px!important}
+.report-mode .export-incident-page .incident-card td,.report-mode .export-incident-page .incident-card th{font-size:11px!important;line-height:1.27;padding:3px 5px!important}
+.report-mode .export-incident-page .incident-pareto svg{max-height:215px!important}
+
+.report-mode .export-incident-page.is-long .incident-grid{display:block!important}.report-mode .export-incident-page.is-long .incident-card{break-inside:auto;page-break-inside:auto}.report-mode .export-incident-page.is-long .incident-column{display:block}.report-mode .export-incident-page.is-long thead{display:table-header-group}
+
+/* V30: adaptive incident report pages. No forced empty columns or orphaned Pareto pages. */
+.report-mode .export-incident-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0;align-items:start}
+.report-mode .export-incident-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start;min-width:0}
+.report-mode .export-dt-only{grid-template-columns:minmax(0,1fr) minmax(0,1.22fr)}
+.report-mode .export-single-rca{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+.report-mode .export-incident-column{display:flex;flex-direction:column;gap:10px;min-width:0}
+.report-mode .export-incident-layout .export-full-row{grid-column:1/-1}
+.report-mode .export-incident-layout .incident-card{margin:0;min-width:0;width:100%;max-width:100%}
+.report-mode .export-incident-layout .incident-card .incident-header{padding:8px 10px;min-height:0}
+.report-mode .export-incident-layout .incident-card .incident-header h5{font-size:14px;line-height:1.3}
+.report-mode .export-incident-layout .incident-card .incident-problem{padding:8px 10px}
+.report-mode .export-incident-layout .incident-card td,.report-mode .export-incident-layout .incident-card th{padding:6px 8px!important;font-size:12px!important;line-height:1.35!important;vertical-align:middle}
+.report-mode .export-incident-layout .incident-card .rca-field-table th{width:25%}
+.report-mode .export-incident-layout .incident-pareto{margin:0;padding:12px;min-width:0;max-width:100%;break-inside:avoid;page-break-inside:avoid}
+.report-mode .export-incident-layout .incident-pareto h4{font-size:14px;margin:0 0 5px}
+.report-mode .export-incident-layout .incident-pareto svg{display:block;width:100%!important;height:auto!important;max-height:none!important;min-width:0!important}
+.report-mode .export-incident-layout .pareto-legend{margin-top:4px;font-size:11px;justify-content:center}
+.report-mode .export-inline-incidents{margin-top:11px!important;padding-top:11px!important;border-top:1px solid #b8ccd9!important;break-inside:avoid;page-break-inside:avoid}
+.report-mode .export-incident-page .export-long-flow{display:block!important}
+.report-mode .export-long-flow .incident-card,.report-mode .export-long-flow .incident-pareto{margin-bottom:10px}
+.report-mode .export-long-flow .export-dt-flow{break-inside:avoid;page-break-inside:avoid}
+.report-mode .export-long-flow .incident-card{break-inside:avoid;page-break-inside:avoid}
+.report-mode .export-long-flow .export-can-split{break-inside:auto!important;page-break-inside:auto!important}
+.report-mode .export-long-flow thead{display:table-header-group!important}
+.report-mode .export-long-flow .incident-header,.report-mode .export-long-flow .incident-problem{break-after:avoid;page-break-after:avoid}
+/* Four populated tables retain the original compact two-column sequence. */
+.report-mode .export-incident-multiple{gap:8px}
+.report-mode .export-incident-multiple .export-incident-pair{gap:10px}
+.report-mode .export-incident-multiple .export-incident-column{gap:8px}
+.report-mode .export-incident-multiple .incident-card .incident-header{padding:5px 8px}
+.report-mode .export-incident-multiple .incident-card .incident-header h5{font-size:12px}
+.report-mode .export-incident-multiple .incident-card .incident-problem{padding:5px 8px}
+.report-mode .export-incident-multiple .incident-card td,.report-mode .export-incident-multiple .incident-card th{padding:3px 5px!important;font-size:11px!important;line-height:1.27!important}
+.report-mode .export-incident-multiple .incident-pareto{padding:8px}
+.report-mode .export-incident-multiple .incident-pareto h4{font-size:12px}
+.report-mode .machine-incidents{container-type:normal!important;contain:none!important}
+.report-mode .export-long-flow .incident-dt-table td,.report-mode .export-long-flow .incident-dt-table th{padding:3px 6px!important;font-size:11.5px!important;line-height:1.32!important}
+.report-mode .export-long-flow .export-dt-flow>.incident-card{margin-bottom:10px}
+
+/* Final PDF layout mirrors the website's populated RCA-count rules. */
+.report-mode .export-adaptive-layout{gap:10px}
+.report-mode .export-adaptive-layout .adaptive-incidents{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;align-items:start}
+.report-mode .export-adaptive-layout .adaptive-incidents.with-dt.rca-count-3,
+.report-mode .export-adaptive-layout .adaptive-incidents.with-dt.rca-count-2,
+.report-mode .export-adaptive-layout .adaptive-incidents.without-dt.rca-count-2,
+.report-mode .export-adaptive-layout .adaptive-incidents.without-dt.rca-count-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+.report-mode .export-adaptive-layout .with-dt.rca-count-3>.incident-dt{grid-area:1/1/2/2}
+.report-mode .export-adaptive-layout .with-dt.rca-count-3>.rca-investigation:nth-child(2){grid-area:2/1/3/2}
+.report-mode .export-adaptive-layout .with-dt.rca-count-3>.rca-investigation:nth-child(3){grid-area:1/2/2/3}
+.report-mode .export-adaptive-layout .with-dt.rca-count-3>.rca-investigation:nth-child(4){grid-area:2/2/3/3}
+.report-mode .export-adaptive-layout .with-dt.rca-count-2>.incident-dt{grid-column:1/-1;width:calc((100% - 10px)/2);justify-self:center}
+.report-mode .export-adaptive-layout .without-dt.rca-count-3>.rca-investigation:last-child{grid-column:1/-1}
+.report-mode .export-adaptive-layout>.incident-pareto{width:100%;grid-column:1/-1}
+
+/* Compact A3 export only: preserve the four-panel layout and full-width chart. */
+.report-mode .export-adaptive-layout.export-incident-multiple .incident-card td,.report-mode .export-adaptive-layout.export-incident-multiple .incident-card th{padding:2px 5px!important}
+.report-mode .export-adaptive-layout.export-incident-multiple .incident-pareto{padding:6px 8px}
+
+/* V32: align the screen layout with the approved PDF, including at Windows zoom. */
+@media screen {
+ html:not(.report-mode) #kpiScorecard{container-type:inline-size;min-width:0;max-width:100%;overflow:visible!important}
+ html:not(.report-mode) #overview .kpi-panel{border-radius:6px;overflow:hidden}
+ html:not(.report-mode) #overview .kpi-banner{padding:15px 18px}
+ html:not(.report-mode) #overview .kpi-meta{padding:9px 16px}
+ html:not(.report-mode) #kpiScorecard:not(.matrix-record-view) .kpi-unified td,
+ html:not(.report-mode) #kpiScorecard:not(.matrix-record-view) .kpi-unified thead th{font-size:clamp(9px,.78cqw,11.5px)!important;line-height:1.25!important;padding:7px 2px!important}
+ html:not(.report-mode) #kpiScorecard:not(.matrix-record-view) .kpi-unified .matrix-goal{font-size:clamp(10px,.84cqw,12px)!important;line-height:1.3!important;padding:7px 5px!important;word-break:normal!important;overflow-wrap:break-word!important}
+ html:not(.report-mode) #kpiScorecard:not(.matrix-record-view) .kpi-unified .kpi-num{margin-right:4px;font-size:clamp(8px,.65cqw,10px)}
+ html:not(.report-mode) #kpiScorecard.matrix-record-view .kpi-unified tr{grid-template-columns:repeat(20,minmax(0,1fr));border:1px solid #cbd9e3}
+ html:not(.report-mode) #kpiScorecard.matrix-record-view .kpi-unified tr td{grid-column:span 5;padding:8px 3px!important;font-size:clamp(10px,3cqw,12px)!important;line-height:1.35}
+ html:not(.report-mode) #kpiScorecard.matrix-record-view .kpi-unified tr td.kpi-threshold{grid-column:span 4}
+ html:not(.report-mode) #kpiScorecard.matrix-record-view .kpi-unified tr td::before{font-size:clamp(9px,2.7cqw,11px);margin-bottom:4px;white-space:normal}
+ html:not(.report-mode) #kpiScorecard.matrix-record-view .kpi-unified tr .matrix-goal{grid-column:1/-1}
+ /* All RCA-count rules use the same card order as the print renderer. */
+ html:not(.report-mode) .machine-incidents .adaptive-incidents{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;align-items:start!important}
+ html:not(.report-mode) .machine-incidents .adaptive-incidents>.incident-card{width:100%;max-width:100%;min-width:0;grid-area:auto;align-self:start;justify-self:stretch;margin:0!important}
+ html:not(.report-mode) .machine-incidents .incident-pareto{width:100%;margin-top:10px!important;min-width:0}
+ @media(min-width:701px){
+  @container (min-width:640px){
+   html:not(.report-mode) .machine-incidents .adaptive-incidents:is(.with-dt.rca-count-3,.with-dt.rca-count-2,.without-dt.rca-count-2,.without-dt.rca-count-3){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+   html:not(.report-mode) .machine-incidents .adaptive-incidents.with-dt.rca-count-3>.incident-dt{grid-area:1/1/2/2}
+   html:not(.report-mode) .machine-incidents .adaptive-incidents.with-dt.rca-count-3>.rca-investigation:nth-child(2){grid-area:2/1/3/2}
+   html:not(.report-mode) .machine-incidents .adaptive-incidents.with-dt.rca-count-3>.rca-investigation:nth-child(3){grid-area:1/2/2/3}
+   html:not(.report-mode) .machine-incidents .adaptive-incidents.with-dt.rca-count-3>.rca-investigation:nth-child(4){grid-area:2/2/3/3}
+   html:not(.report-mode) .machine-incidents .adaptive-incidents.with-dt.rca-count-2>.incident-dt{grid-column:1/-1;justify-self:center;width:calc((100% - 10px)/2)}
+   html:not(.report-mode) .machine-incidents .adaptive-incidents.without-dt.rca-count-3>.rca-investigation:last-child{grid-column:1/-1}
+  }
+ }
+ /* Keep a full-width reporting canvas on smaller laptops and zoomed desktops. */
+ @media(min-width:701px) and (max-width:1209px){
+  html:not(.report-mode) .shell{display:block!important}
+  html:not(.report-mode) .sidebar{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(220px,360px);align-items:center;gap:18px;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;position:sticky!important;top:0!important;padding:10px 18px!important}
+  html:not(.report-mode) .sidebar .brandlockup{border:0;margin:0;padding:0}
+  html:not(.report-mode) .sidebar .brandmark{width:48px;height:42px;flex-basis:48px}
+  html:not(.report-mode) .sidebar .brandmark img{width:38px}
+  html:not(.report-mode) .sidebar .nav,html:not(.report-mode) .sidebar .nav-caption,html:not(.report-mode) .sidebar .sidefoot{display:none!important}
+  html:not(.report-mode) .sidebar .mobile-nav{display:block!important;min-width:0}
+  html:not(.report-mode) .sidebar .mobile-nav select{height:40px;min-height:40px;margin-top:3px}
+  html:not(.report-mode) .main{width:100%!important;margin:0!important;padding:16px!important}
+ }
+ @media(min-width:1210px) and (max-width:1350px){
+  html:not(.report-mode) .shell{grid-template-columns:210px minmax(0,1fr)!important}
+  html:not(.report-mode) .sidebar{width:100%!important;padding-left:12px;padding-right:12px}
+  html:not(.report-mode) .main{padding:19px 17px!important}
+ }
+ @media(max-width:700px){
+  html:not(.report-mode) #overview .kpi-banner{padding:12px 11px}
+  html:not(.report-mode) #overview .kpi-banner h2{font-size:15px;line-height:1.3}
+  html:not(.report-mode) #overview .kpi-meta{padding:8px 10px}
+  html:not(.report-mode) #kpiScorecard.matrix-record-view{padding:6px!important;background:#f3f7fa}
+  html:not(.report-mode) .machine-incidents .adaptive-incidents>.incident-card{width:100%;grid-area:auto}
+ }
+}

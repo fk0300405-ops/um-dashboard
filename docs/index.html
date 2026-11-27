@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>U&M Performance Dashboard</title>
+<meta name="dashboard-release" content="V32-Final">
+<link rel="icon" type="image/png" href="./tripack-favicon.png">
+<script src="./vendor/chart.js/chart.umd.js"></script>
+<style>
+:root{--bg:#f3f6fb;--panel:#fff;--ink:#17243a;--muted:#728097;--line:#e5eaf2;--nav:#10233f;--blue:#2563eb;--cyan:#0ea5a4;--green:#15803d;--greenbg:#e8f7ed;--red:#b91c1c;--redbg:#feecec;--amber:#a16207;--amberbg:#fff7df;--shadow:0 8px 28px rgba(23,36,58,.06)}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink)}.shell{display:flex;min-height:100vh}.sidebar{width:248px;background:var(--nav);color:#fff;padding:24px 16px;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:4}.brand{font-weight:800;font-size:18px;letter-spacing:.3px;padding:5px 12px 24px}.brand small{display:block;color:#a9bbd4;font-weight:500;font-size:11px;margin-top:6px;letter-spacing:1.2px}.brandlockup{display:flex;align-items:center;gap:10px}.brandlockup img{width:70px;height:auto;display:block;flex:0 0 auto}.brandtext{min-width:0}.brandtext strong{display:block;font-size:15px;line-height:1.2;color:#fff;font-weight:700}.brandtext small{margin-top:4px;text-transform:none}.nav{display:grid;gap:6px}.nav button{background:transparent;border:0;color:#bdcbe0;text-align:left;padding:12px;border-radius:9px;font-size:13px;cursor:pointer}.nav button:hover,.nav button.active{background:#203b60;color:#fff}.nav button span{display:inline-block;width:25px;opacity:.9}.sidefoot{margin-top:auto;color:#91a5c1;font-size:11px;padding:14px 12px;line-height:1.6}.main{margin-left:248px;width:calc(100% - 248px);padding:28px 32px 48px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}.eyebrow{font-size:11px;color:var(--blue);font-weight:800;letter-spacing:1.4px;text-transform:uppercase}.top h1{font-size:26px;margin:6px 0 4px}.sub{font-size:13px;color:var(--muted)}.actions{display:flex;gap:9px;align-items:center}.btn,select{border:1px solid var(--line);background:#fff;border-radius:8px;padding:10px 13px;color:var(--ink);font-size:12px}.btn{cursor:pointer;font-weight:700}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.stamp{font-size:11px;color:var(--muted);text-align:right;margin-top:8px}.grid{display:grid;gap:16px}.cards{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:18px}.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow)}.card{padding:17px 18px}.card .label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase}.card .value{font-size:27px;font-weight:800;margin:9px 0 5px;letter-spacing:-.6px}.card .foot{font-size:11px;color:var(--muted)}.panel{padding:19px;margin-bottom:16px}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.panel h2{font-size:15px;margin:0}.panel p.hint{font-size:11px;color:var(--muted);margin:5px 0 0}.two{grid-template-columns:1.35fr 1fr}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.class-machine-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.machine-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;box-shadow:var(--shadow);min-width:0}.machine-owner{display:flex;align-items:center;gap:12px;margin-bottom:12px}.machine-owner img{width:52px;height:52px;object-fit:cover;border-radius:50%;border:2px solid #e5eaf2}.machine-owner h3{font-size:16px;margin:0 0 4px}.machine-owner p{font-size:11px;color:var(--muted);margin:0}.machine-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 14px}.machine-metric{padding:9px;border-radius:8px;background:#f7f9fc}.machine-metric small{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700}.machine-metric b{display:block;font-size:16px;margin-top:4px}.machine-charts{display:grid;grid-template-columns:1fr;gap:10px}.machine-chart{height:155px;position:relative;border-top:1px solid var(--line);padding-top:8px}.machine-chart h4{font-size:11px;margin:0 0 5px;color:#52627a}.machine-chart canvas{width:100%!important;height:125px!important}@media(max-width:1100px){.class-machine-grid{grid-template-columns:1fr}}.chartbox{height:290px;position:relative}.chartbox.short{height:230px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:9px}table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th{background:#f7f9fc;color:#65748b;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;padding:11px 12px;position:sticky;top:0}td{padding:10px 12px;border-top:1px solid #edf0f5}tr:hover td{background:#fafcff}.good{background:var(--greenbg)!important;color:var(--green);font-weight:700}.bad{background:var(--redbg)!important;color:var(--red);font-weight:700}.neutral{background:var(--amberbg)!important;color:var(--amber);font-weight:700}.pill{display:inline-block;border-radius:3px;padding:4px 8px;font-size:10px;font-weight:800}.pill.good{background:var(--greenbg);color:var(--green)}.pill.bad{background:var(--redbg);color:var(--red)}.pill.neutral{background:var(--amberbg);color:var(--amber)}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.toolbar label{font-size:11px;color:var(--muted);font-weight:700}.toolbar select{min-width:130px}.section{display:none}.section.active{display:block}.empty{padding:30px;border:1px dashed #cbd5e1;border-radius:10px;color:var(--muted);font-size:13px;background:#fafcff}.legend{font-size:11px;color:var(--muted);display:flex;gap:12px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.note{border-left:3px solid #eab308;background:#fff9e7;padding:12px 14px;border-radius:7px;font-size:12px;color:#775b16;line-height:1.5}.muted{color:var(--muted)}.metricline{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}.metricline:last-child{border:0}.small{font-size:11px;color:var(--muted)}
+@media(max-width:1050px){.sidebar{width:205px}.main{margin-left:205px;width:calc(100% - 205px);padding:22px}.cards{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}}@media(max-width:700px){.shell{display:block}.sidebar{position:relative;width:100%;height:auto;padding:12px}.brand{padding:6px 8px 12px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;padding:9px}.sidefoot{display:none}.main{margin:0;width:100%;padding:18px 13px}.top{display:block}.actions{margin-top:14px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.card .value{font-size:22px}}
+
+/* Full preventive maintenance register: fixed machine column, grouped period headings. */
+.pm-detail-panel{min-width:0;overflow:hidden;padding:0}.pm-detail-banner{background:#77c1df;color:#102f49;padding:15px 19px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.pm-detail-banner h2{font-size:16px;font-weight:800;letter-spacing:.25px}.pm-detail-body{padding:16px 19px 18px;min-width:0}.pm-detail-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}.pm-detail-controls .toolbar{margin:0}.pm-detail-controls .legend{flex-wrap:wrap}.pm-detail-scroll{max-height:68vh;overflow:auto;position:relative;overscroll-behavior-x:contain;border:1px solid #aabed0;border-radius:7px;isolation:isolate}.pm-detail-table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;white-space:nowrap;font-size:12px;font-variant-numeric:tabular-nums}.pm-detail-table th,.pm-detail-table td{border:0;border-right:1px solid #d4e1ec;border-bottom:1px solid #d4e1ec;padding:9px 10px;box-sizing:border-box;text-align:right;line-height:16px;letter-spacing:0;text-transform:none}.pm-detail-table thead th{position:sticky;z-index:4;text-align:center;font-size:11px;font-weight:700}.pm-detail-table thead tr:first-child th{top:0;height:52px;background:#14548a;color:#fff;vertical-align:middle}.pm-detail-table thead tr:nth-child(2) th{top:52px;height:35px;background:#bed7eb;color:#102f49}.pm-detail-table th.pm-period-group{min-width:222px;border-right:2px solid #8baec9}.pm-detail-table th.pm-period-summary{background:#103a63!important}.pm-detail-table .pm-machine{position:sticky;left:0;min-width:140px;width:140px;text-align:left;z-index:3;border-right:2px solid #8baec9;font-weight:700}.pm-detail-table thead tr:first-child th.pm-machine{z-index:7;background:#bed7eb;color:#102f49;text-align:center}.pm-detail-table tbody th.pm-machine{top:auto;background:#fff;color:#142e45;font-size:12px}.pm-detail-table tbody td{min-width:74px;background:#fff}.pm-detail-table tbody tr:nth-child(even) td,.pm-detail-table tbody tr:nth-child(even) th.pm-machine{background:#f6faff}.pm-detail-table .pm-group-end{border-right:2px solid #8baec9}.pm-detail-table .pm-good{background:#d8f3df!important;color:#086c32;font-weight:800}.pm-detail-table .pm-bad{background:#fce0e0!important;color:#b20d19;font-weight:800}.pm-detail-table .pm-na{background:#eef2f6!important;color:#687a8a;font-weight:600;text-align:center}.pm-detail-table .pm-summary-cell{font-weight:700}.pm-detail-table .pm-remarks{min-width:250px;width:280px;max-width:320px;white-space:normal;text-align:left}.pm-detail-table .pm-total th,.pm-detail-table .pm-total td{position:sticky;top:auto;bottom:0;z-index:5;background:#14548a!important;color:#fff;font-weight:800;border-top:2px solid #103a63;border-bottom:0}.pm-detail-table .pm-total .pm-machine{z-index:8;background:#14548a!important;color:#fff}.pm-detail-table .pm-total td.pm-good{background:#b8ebc8!important;color:#075c2a}.pm-detail-table .pm-total td.pm-bad{background:#f5bfc1!important;color:#a00913}.pm-detail-table .pm-total td.pm-na{background:#dce6ef!important;color:#45596d}.pm-coverage-sub{display:block;font-size:9px;line-height:11px;font-weight:400;margin-top:2px;color:#e3f3ff}.pm-detail-panel .hint{line-height:1.5}.pm-detail-scroll:focus-visible{outline:2px solid #14548a;outline-offset:2px}
+
+/* Executive scorecard: compact two-level heading, Excel-linked status fills. */
+#overview .kpi-panel{padding:0;min-width:0;overflow:hidden;border-radius:12px}
+.kpi-banner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:18px 20px;background:#064e68;color:white}
+.kpi-banner h2{font-size:17px;letter-spacing:.2px;font-weight:800}.kpi-banner p{margin:5px 0 0;font-size:11px;color:#cae5f2}.kpi-period{border:1px solid #78b7cb;padding:6px 10px;border-radius:5px;font-size:11px;font-weight:700;white-space:nowrap}
+.kpi-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;font-size:11px;color:#52647a}.kpi-meta .legend{flex-wrap:wrap;gap:12px}.kpi-meta .dot{width:12px;height:12px;border:1px solid #a2b4bb;border-radius:3px;vertical-align:middle}
+.kpi-scroll{overflow:auto;max-height:74vh;position:relative;isolation:isolate;overscroll-behavior-x:contain;border-block:1px solid #b4c6d4;scrollbar-color:#8bb2c4 #eef4f8}.kpi-scroll:focus-visible{outline:2px solid #0c77a5;outline-offset:-2px}
+.kpi-scorecard{border-collapse:separate;border-spacing:0;table-layout:fixed;min-width:1488px;width:100%;font-size:11.5px;white-space:normal;color:#132c3e;font-variant-numeric:tabular-nums}
+.kpi-scorecard th,.kpi-scorecard td{box-sizing:border-box;text-transform:none;letter-spacing:0;line-height:1.25;padding:8px 5px;text-align:center;vertical-align:middle;border:0;border-right:1px solid #d5e1e8;border-bottom:1px solid #d5e1e8;font-weight:650}
+.kpi-scorecard .kpi-id-col{width:39px}.kpi-scorecard .kpi-goal-col{width:156px}.kpi-scorecard .kpi-criteria-col{width:59px}.kpi-scorecard .kpi-summary-col{width:78px}.kpi-scorecard .kpi-month-col{width:69px}
+.kpi-scorecard thead th{position:sticky;z-index:4;background:#034f6b;color:#fff;font-size:11px;font-weight:750}
+.kpi-scorecard thead tr:first-child th{top:0;height:39px;border-right-color:#38758a;border-bottom-color:#38758a}.kpi-scorecard thead tr:nth-child(2) th{top:39px;height:33px;background:#e0f0dc;color:#143626}
+.kpi-scorecard thead tr:first-child th[rowspan="2"]{height:72px}.kpi-scorecard thead .kpi-ytd-head{background:#51a6e4!important;border-right-color:#327ab1!important}.kpi-scorecard thead .kpi-goal{text-align:left;padding-left:9px}
+.kpi-scorecard .kpi-id,.kpi-scorecard .kpi-goal{position:sticky;z-index:3}.kpi-scorecard .kpi-id{left:0}.kpi-scorecard .kpi-goal{left:39px;border-right:2px solid #92b3c9;text-align:left;padding-left:9px;overflow-wrap:anywhere}
+.kpi-scorecard thead .kpi-id,.kpi-scorecard thead .kpi-goal{z-index:6}.kpi-scorecard tbody th.kpi-id{top:auto;background:#f0f4f7;color:#183449;font-size:11px}.kpi-scorecard tbody th.kpi-goal{top:auto;background:#7bc5e1;color:#0a293e;font-size:11.5px;font-weight:750}
+.kpi-scorecard tbody tr{height:41px}.kpi-scorecard tbody td{background:#fff;color:#142e3e;white-space:nowrap}.kpi-scorecard tbody td.kpi-criteria{background:#d9edf6}.kpi-scorecard tbody td.kpi-target{background:#c1ebf9;color:#10364a;font-weight:750}.kpi-scorecard tbody td.kpi-rating,.kpi-scorecard tbody td.kpi-ytd{font-weight:800}.kpi-scorecard tbody td.kpi-ytd{border-right:2px solid #86aabd}
+.kpi-scorecard tbody tr.kpi-dt th.kpi-goal{background:#cbc9f7}.kpi-scorecard tbody tr.kpi-dt td.kpi-criteria{background:#e1e0fb}.kpi-scorecard tbody tr.kpi-waste th.kpi-goal{background:#63afe8}.kpi-scorecard tbody tr.kpi-waste td.kpi-criteria{background:#c9e3f7}.kpi-scorecard tbody tr.kpi-child th.kpi-goal{padding-left:20px}.kpi-scorecard tbody tr.kpi-group-start>*{border-top:2px solid #6e93ac}.kpi-scorecard tbody tr.kpi-group-start th.kpi-goal{font-weight:850}.kpi-scorecard tbody tr:hover td{background:#fff}/* inline workbook styles retain precedence */
+.kpi-footer{padding:10px 16px 14px;font-size:11px;color:#64748b;line-height:1.5}.kpi-footer b{color:#3b526b}.kpi-scorecard tbody td.kpi-unreported{color:#718096}
+@media(max-width:700px){.kpi-banner{padding:14px}.kpi-scroll{max-height:70vh}.kpi-meta{padding:10px 12px}}
+@media print{body:has(#overview.active){background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}body:has(#overview.active) .sidebar,body:has(#overview.active) .actions,body:has(#overview.active) .stamp{display:none}body:has(#overview.active) .main{width:100%;margin:0;padding:0}body:has(#overview.active) .top{margin-bottom:8px}#overview.active .kpi-panel{box-shadow:none;border:0;overflow:visible}#overview.active .kpi-scroll{max-height:none;overflow:visible}#overview.active .kpi-scorecard{min-width:0;width:100%;font-size:8px}#overview.active .kpi-scorecard th,#overview.active .kpi-scorecard td{position:static;padding:4px 2px;font-size:8px}#overview.active .kpi-scorecard col{width:auto}#overview.active .kpi-scorecard .kpi-id-col{width:3%}#overview.active .kpi-scorecard .kpi-goal-col{width:11%}#overview.active .kpi-scorecard tbody tr{height:auto;break-inside:avoid}#overview.active .kpi-scorecard thead{display:table-header-group}}
+
+
+/* YTD preventive maintenance completion rings: actual job shares, not target ratings. */
+.pm-ring-panel{min-width:0}.pm-ring-panel .panelhead{flex-wrap:wrap;align-items:flex-start;gap:12px}.pm-ring-legend{display:flex;align-items:center;flex-wrap:wrap;gap:14px;font-size:12px;color:#42526a}.pm-ring-legend span{display:inline-flex;align-items:center;gap:6px}.pm-ring-legend i{width:11px;height:11px;border-radius:2px;display:inline-block}
+.pm-ring-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.pm-ring-item{margin:0;min-width:0;border:1px solid #e0e7ee;border-radius:10px;background:#fff;padding:13px 9px 11px;text-align:center;display:flex;flex-direction:column;align-items:center}.pm-ring-name{font-size:15px;font-weight:750;color:#13243b;margin:0 0 2px;overflow-wrap:anywhere}.pm-ring-svg{display:block;width:100%;max-width:162px;height:auto;margin:5px auto 7px;overflow:visible}.pm-ring-center{fill:#101820;font-size:27px;font-weight:800;font-family:inherit;font-variant-numeric:tabular-nums}.pm-ring-counts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;font-size:11px;color:#536176;font-variant-numeric:tabular-nums}.pm-ring-counts b{font-size:13px;display:block;color:#18283e}.pm-ring-counts .pm-done b{color:#00863e}.pm-ring-counts .pm-pending b{color:#c90000}.pm-ring-note{font-size:11px;color:#617087;margin:12px 0 0;line-height:1.5}
+@media(max-width:1150px){.pm-ring-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:850px){.pm-ring-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:360px){.pm-ring-grid{grid-template-columns:1fr}}
+
+/* Professional responsive layout: contained table and plot scrolling, no decorative animation. */
+.main,.section,.grid,.panel,.card,.chartbox,.tablewrap{min-width:0}.grid>*{min-width:0}.two{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}.chart-scroll{max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain}.sidefoot a,.app-footer a{color:inherit;text-decoration:underline;text-underline-offset:3px}.app-footer{display:block;margin-top:18px;color:#52647a;font-size:12px}.app-footer-branding{background:#fff;border:1px solid var(--line);padding:8px 10px;border-radius:4px}.app-footer-branding img{display:block;width:100%;height:auto}.app-footer-links{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:10px 2px 0}.btn,select,.nav button,.card,.panel,.pm-ring-item{border-radius:6px}.btn:focus-visible,.nav button:focus-visible,select:focus-visible,a:focus-visible,.chart-scroll:focus-visible{outline:2px solid #0b79b8;outline-offset:2px}.pm-ring-counts span{min-width:0}.pm-ring-counts{gap:8px}.pm-ring-note{overflow-wrap:anywhere}.stamp{overflow-wrap:anywhere}.chartbox canvas{max-width:100%}.panelhead{flex-wrap:wrap}.pm-ring-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1150px){.pm-ring-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1050px){.two,.three{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:850px){.pm-ring-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.sidebar{padding:12px}.nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;overflow:visible}.nav button{white-space:normal;line-height:1.25;min-height:40px;padding:8px 10px;font-size:12px}.main{padding:16px 12px 28px}.top{margin-bottom:14px}.top h1{font-size:23px}.actions{flex-wrap:wrap;gap:8px}.btn,select{min-height:42px;font-size:13px}.stamp{text-align:left;margin:0 0 12px;line-height:1.4}.panel{padding:13px;margin-bottom:12px}.card{padding:12px}.card .label{font-size:10px;line-height:1.3}.card .foot{line-height:1.4}.card .value{font-size:20px;overflow-wrap:anywhere}.grid{gap:10px}.pm-ring-grid{gap:8px}.pm-ring-item{padding:10px 5px}.pm-ring-name{font-size:13px}.pm-ring-svg{max-width:148px}.pm-ring-counts{gap:5px;font-size:10px}.pm-ring-counts b{font-size:12px}.pm-ring-legend{font-size:11px}.pm-detail-panel{padding:0}.pm-detail-body{padding:10px}.pm-detail-banner{padding:12px}.pm-detail-scroll{max-height:65vh}.pm-detail-table .pm-machine{width:106px;min-width:106px;max-width:106px}.pm-detail-table tbody th.pm-machine{white-space:normal;font-size:11px}.kpi-scorecard .kpi-id-col{width:32px}.kpi-scorecard .kpi-goal-col{width:112px}.kpi-scorecard .kpi-goal{left:32px;padding-left:5px}.kpi-scorecard tbody tr.kpi-child th.kpi-goal{padding-left:10px}.kpi-scorecard tbody th.kpi-goal{font-size:10.5px}.kpi-scorecard{min-width:1437px}.chartbox.dense-chart{min-width:var(--mobile-chart-width,500px)}.chartbox{height:265px}.app-footer{font-size:11px}.toolbar select{max-width:100%}}
+@media(max-width:359px){.pm-ring-grid{grid-template-columns:minmax(0,1fr)}.pm-ring-svg{max-width:160px}.cards{grid-template-columns:minmax(0,1fr)}.pm-ring-counts{gap:12px;font-size:12px}.pm-ring-counts b{font-size:14px}}
+
+
+/* V11: shared, restrained internal reporting design across every tab. */
+:root{--bg:#f4f6f8;--ink:#162a3b;--muted:#52647a;--line:#cfd9e2;--nav:#12314a;--blue:#125b88;--shadow:none}
+body{font-family:Segoe UI,Arial,sans-serif;line-height:1.45;font-variant-numeric:tabular-nums} .sidebar{overflow-y:auto}.brand{letter-spacing:.15px}.nav button{font-weight:600;min-height:44px;border-radius:4px}.nav button.active{background:#245778;border-left:3px solid #8ac3df;padding-left:9px}.nav button:not(.active){border-left:3px solid transparent;padding-left:9px}.card,.panel,.machine-card,.pm-ring-item,.tablewrap,.btn,select,.empty{border-radius:4px;box-shadow:none}.top h1{font-weight:700}.card .label,.card .foot,.small,.panel p.hint,.toolbar label,.legend,.stamp{font-size:12px}.panel h2{font-size:16px}.panel .hint{line-height:1.5}.card .value{line-height:1.2}.stamp{border-bottom:1px solid var(--line);padding:0 0 12px;margin:0 0 18px;text-align:left;line-height:1.5}.stamp[data-error=true]{color:#9c0006;font-weight:600}.panelhead{align-items:flex-start}.legend{flex-wrap:wrap}.tablewrap{max-width:100%;max-height:64vh;overscroll-behavior-x:contain;scrollbar-color:#8ca6b8 #eef2f6}table:not(.kpi-scorecard):not(.pm-detail-table) th{background:#e6eef4;color:#213f58;font-size:12px;text-transform:none;letter-spacing:0;z-index:2}table:not(.kpi-scorecard):not(.pm-detail-table) td{font-size:13px}table:not(.kpi-scorecard):not(.pm-detail-table) td:first-child,table:not(.kpi-scorecard):not(.pm-detail-table) th:first-child{position:sticky;left:0;background:#fff;z-index:1;box-shadow:1px 0 #cfd9e2}table:not(.kpi-scorecard):not(.pm-detail-table) th:first-child{background:#e6eef4;z-index:3} .chart-scroll{overflow-x:auto;scrollbar-color:#8ca6b8 #eef2f6}.chart-scroll:focus-visible,.tablewrap:focus-visible{outline:2px solid #125b88;outline-offset:2px}.chartbox{max-width:none}.chartbox.dense-chart{min-width:var(--chart-width,520px)}.chartbox.chart-compact{height:190px}.machine-chart{height:auto;min-width:0}.machine-chart canvas{height:auto!important}.machine-metric{border-radius:4px}.machine-owner img{border-radius:4px}.machine-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.machine-metric small{font-size:11px;white-space:normal}.machine-metric b{font-size:15px;overflow-wrap:anywhere}.chart-fallback{border:1px solid #cfd9e2;padding:10px;margin:8px 0;background:#f7fafc}.chart-fallback p{font-size:12px;margin:0 0 8px;color:#52647a}.chart-scroll[hidden],.chartbox[hidden]{display:none!important}.source-note{font-size:12px;color:#52647a;line-height:1.5}.mobile-guide{display:none}
+@media(max-width:1050px){.sidebar{width:205px}.main{margin-left:205px;width:calc(100% - 205px)}}
+@media(max-width:700px){.sidebar{position:relative;width:100%;padding:12px 14px}.main{margin:0;width:100%;padding:14px 12px 26px}.nav button{min-height:44px;font-size:13px}.nav button.active{padding-left:7px}.nav button:not(.active){padding-left:7px}.top h1{font-size:23px}.top .sub{font-size:13px}.toolbar{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}.toolbar select{min-width:0;width:100%;font-size:14px;min-height:44px}.actions .btn{min-height:44px;font-size:13px}.panel h2{font-size:15px}.panel .hint,.card .foot,.small,.source-note,.stamp{font-size:12px}.card .label{font-size:11px}.card .value{font-size:21px}.pm-ring-name{font-size:14px}.pm-ring-counts{font-size:11px}.pm-ring-counts b{font-size:13px}.machine-metric small{font-size:10px}.machine-metric b{font-size:14px}.machine-card{padding:12px}.machine-metrics{gap:4px}.machine-metric{padding:6px}.mobile-guide{display:block;font-size:12px;color:#52647a;margin:0 0 12px}.chartbox.dense-chart{min-width:var(--chart-width,520px)}.chartbox{height:280px}.chartbox.chart-compact{height:190px}.kpi-scorecard tbody th.kpi-goal{font-size:11.5px}.kpi-scorecard th,.kpi-scorecard td{font-size:11.5px}.pm-detail-table tbody th.pm-machine{font-size:12px}.tablewrap{max-height:62vh}.app-footer{font-size:12px}}
+@media(max-width:359px){.machine-metrics{grid-template-columns:1fr}.pm-ring-grid,.cards{grid-template-columns:1fr}.card .value{font-size:23px}}
+@media print{.sidebar,.actions,.app-footer,.mobile-guide{display:none!important}.main{width:100%;margin:0;padding:0}.tablewrap,.chart-scroll,.kpi-scroll,.pm-detail-scroll{max-height:none;overflow:visible}.panel,.card{box-shadow:none}.section.active{display:block}.stamp{font-size:10px}}
+
+
+.mobile-nav{display:none}.machine-chart canvas{height:100%!important}.mobile-nav label{font-size:12px;color:#dceaf2;font-weight:600}.mobile-nav select{display:block;width:100%;background:white;color:#162a3b;margin-top:5px;font-size:14px;min-height:44px;border-radius:4px}
+@media(max-width:700px){.sidebar .nav{display:none}.mobile-nav{display:block}.sidebar .brand{padding:2px 0 9px}.sidebar{padding:12px 14px 14px}.brandlockup{gap:8px}.brandlockup img{width:58px}.brandtext strong{font-size:14px}.brand small{margin-top:2px}.top h1{margin-top:2px}.stamp{margin-bottom:10px}.mobile-guide{margin-bottom:9px}.app-footer-branding{padding:6px 8px}.app-footer-links{gap:8px;padding-top:8px}}
+
+/* V12: current-month machine reliability, actual downtime tables and RCA. */
+.class-toolbar{justify-content:flex-start;align-items:center}.current-period-label{font-size:13px;color:#25465f;margin-left:auto;padding:9px 0}.class-machine-grid{align-items:start;grid-template-columns:repeat(2,minmax(0,1fr));}.machine-card.has-current-details{grid-column:1/-1}.machine-card{min-width:0}.machine-metric b{overflow-wrap:anywhere}.machine-metric small{line-height:1.35}.machine-metric b.neutral{font-size:13px}.current-dt,.current-rca{border-top:1px solid #dbe5ed;padding-top:16px;margin-top:17px;min-width:0}.detail-heading{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px 14px;justify-content:space-between;margin-bottom:12px}.detail-heading h4,.pareto-panel h4{margin:0;font-size:14px;color:#173b54}.detail-heading span{font-size:12px;color:#617489}.dt-detail-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}.dt-register,.pareto-panel{min-width:0}.dt-register table{min-width:425px;white-space:normal}.dt-register th{background:#125272;color:#fff;font-size:11px;text-transform:none;letter-spacing:0;position:static}.dt-register td{font-size:12px;line-height:1.45;vertical-align:top}.dt-register td:nth-child(2){min-width:180px;max-width:360px;white-space:normal;overflow-wrap:anywhere}.dt-register td:not(:nth-child(2)){font-variant-numeric:tabular-nums}.dt-register tbody tr:last-child td{background:#e0ebf2;color:#153c53}.pareto-panel{border:1px solid #dbe5ed;border-radius:6px;padding:12px;min-width:0}.pareto-scroll{width:100%;overflow-x:auto;margin-top:8px}.pareto-svg{display:block;width:100%;height:auto;max-height:300px}.pareto-legend{display:flex;gap:13px;flex-wrap:wrap;font-size:11px;color:#52627a;justify-content:center;margin-top:7px}.pareto-legend i{display:inline-block;width:12px;height:9px;background:#165b85;margin-right:3px}.pareto-legend span:nth-child(2) i{height:3px;background:#b8860b;vertical-align:middle}.rca-investigations{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}.rca-investigation{min-width:0;border:1px solid #d6e1e9;border-radius:6px;overflow:hidden;background:#fff}.rca-investigation:only-child{grid-column:1/-1}.rca-investigation header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;background:#125272;color:#fff;padding:11px 13px;font-size:12px}.rca-health{font-size:11px;font-weight:500}.rca-investigation h5{font-size:13px;line-height:1.5;margin:13px 13px 8px;overflow-wrap:anywhere}.rca-duration{font-size:11px;color:#65748b;margin:0 13px 10px}.rca-investigation dl{margin:0;padding:0 13px 12px}.rca-investigation dl div{border-top:1px solid #e5ebf0;padding:10px 0 0;margin:8px 0}.rca-investigation dt{font-size:11px;font-weight:700;color:#125272;margin-bottom:4px}.rca-investigation dd{margin:0;font-size:12px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.source-note{overflow-wrap:anywhere}#rcaLogContent[hidden]{display:none!important}
+@media(max-width:1200px){.dt-detail-grid{grid-template-columns:minmax(0,1fr)}.rca-investigations{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:768px){.class-machine-grid,.rca-investigations{grid-template-columns:minmax(0,1fr)}.current-period-label{margin-left:0}.machine-card{padding:12px}.machine-metrics{gap:5px}.machine-metric{padding:7px}.machine-metric b{font-size:15px}.detail-heading{display:block}.detail-heading span{display:block;margin-top:5px}.pareto-panel{padding:8px}.rca-investigation header{padding:10px}.dt-register td{padding:9px}}
+/* V13: one independently readable row per Why and action. */
+.rca-field-table{width:100%;table-layout:fixed;border-collapse:collapse;white-space:normal;font-size:13px}.rca-field-table th,.rca-field-table td{position:static;vertical-align:top;text-align:left;line-height:1.5;border-top:1px solid #dce6ee;padding:10px 12px;white-space:pre-wrap;overflow-wrap:anywhere}.rca-field-table th{width:34%;background:#edf4f8;color:#125272;letter-spacing:0;text-transform:none;font-size:12px;font-weight:700;border-right:1px solid #dce6ee}.rca-field-table td{background:#fff;color:#17243a}.rca-field-table tr:hover td{background:#fff}.rca-field-table tr:nth-child(even) td,.rca-field-table tr:nth-child(even):hover td{background:#f8fafc}@media(max-width:480px){.rca-field-table th,.rca-field-table td{padding:9px 8px}.rca-field-table th{width:36%;font-size:12px}.rca-field-table td{font-size:13px}}
+
+/* V15: machine-specific trends, fixed rating labels and side-by-side MTBF bars. */
+#classes .class-machine-grid{grid-template-columns:minmax(0,1fr)}
+.class-performance{border-top:1px solid #d5e0e8;padding-top:12px;margin:12px 0;min-width:0}
+.class-performance-header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}.class-performance-header h4{font-size:14px;margin:0;color:#17354d}.class-performance-header span{font-size:11px;color:#52647a}
+.class-perf-charts{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.class-perf-chart{min-width:0;border:1px solid #d5e0e8;padding:10px 12px;border-radius:4px;background:#fff}.class-perf-chart header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:5px}.class-perf-chart h5{margin:0;font-size:14px;color:#17354d}.class-rating{font-size:11px;font-weight:700;padding:5px 8px;border:1px solid #cfd9e2;border-radius:3px;text-align:right;line-height:1.3;flex-shrink:0;max-width:55%}.class-rating.good{background:#e8f7ed;color:#116837}.class-rating.bad{background:#feecec;color:#a51b1b}.class-rating.partial{background:#fff4d9;color:#785006}.class-rating.neutral{background:#edf2f7;color:#52647a}.class-rating small{display:block;font-size:10px;font-weight:500}.class-plot{overflow-x:auto;max-width:100%;min-width:0;overscroll-behavior-x:contain}.class-plot svg{display:block;width:100%;height:auto;max-height:300px}.class-plot:focus-visible{outline:2px solid #125b88;outline-offset:2px}.class-perf-legend{display:flex;flex-wrap:wrap;gap:8px 13px;font-size:11px;color:#52647a;margin-top:6px}.class-perf-legend span{display:inline-flex;align-items:center;gap:5px}.class-perf-legend i{display:inline-block;width:11px;height:11px;border:1px solid #8296a8}.class-perf-chart p{margin:6px 0 0;font-size:11px;color:#52647a}.class-swipe-hint{display:none}
+@media(max-width:700px){.class-swipe-hint{display:block;font-size:11px;color:#52647a;margin:3px 0 6px}.class-perf-chart{padding:8px}.class-perf-chart header{gap:6px}.class-perf-chart h5{font-size:13px}.class-plot svg{max-height:none}.class-rating{font-size:10px}.class-perf-legend{font-size:10px}}
+/* V16: source-linked wastage charts and a compact comparison table. */
+.waste-panel{margin-bottom:16px}.waste-graphs{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:12px}.waste-graphs .class-perf-chart{padding:14px 12px}.waste-graphs .class-perf-chart h5{font-size:16px}.waste-graphs .waste-total{border-top:3px solid #125272}.waste-legend{margin-top:0;padding:4px 0 6px}.waste-graphs .class-plot svg{max-height:none}.waste-subtitle{margin-top:3px;font-size:11px;color:#52647a}.waste-graphs .class-perf-chart p{margin:6px 0 0}.waste-chart-source{font-size:11px;color:#52647a}
+@media(max-width:700px){.waste-graphs .class-perf-chart{padding:10px 8px}.waste-graphs .class-perf-chart h5{font-size:14px}.waste-legend{gap:7px 11px}.waste-graphs .class-perf-chart header{flex-wrap:wrap}.waste-graphs .class-rating{max-width:none}.waste-graphs .class-plot{scrollbar-width:auto}}
+
+/* V17: financial-impact register with workbook-derived styles and hidden ranges. */
+.fi-panel{min-width:0;overflow:hidden}.fi-panelhead{align-items:flex-start;flex-wrap:wrap;gap:10px}.fi-panelhead h2{margin:0}.fi-subtitle{font-size:12px;color:#52647a;margin:4px 0 0}.fi-view{display:flex;align-items:center;gap:8px;font-size:12px;color:#52647a;flex-wrap:wrap}.fi-view select{max-width:100%;border-radius:4px}.fi-legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:0 0 12px;font-size:11px;color:#52647a}.fi-legend span{display:inline-flex;gap:6px;align-items:center}.fi-legend i{display:inline-block;width:12px;height:12px;border:1px solid}.fi-scroll{max-width:100%;max-height:75vh;overflow:auto;overscroll-behavior:contain;border:1px solid #aab8c4;scrollbar-width:auto;border-radius:0}.fi-scroll:focus-visible{outline:2px solid #125b88;outline-offset:2px}.fi-table{--fi-id:44px;--fi-goal:222px;--fi-period:81px;border-collapse:separate;border-spacing:0;table-layout:fixed;width:max-content;min-width:0;font-size:12px;font-variant-numeric:tabular-nums}.fi-table col.fi-id-width{width:var(--fi-id)}.fi-table col.fi-goal-width{width:var(--fi-goal)}.fi-table col.fi-period-width{width:var(--fi-period)}.fi-table th,.fi-table td{padding:10px 7px;line-height:1.35;letter-spacing:0;text-transform:none;vertical-align:middle;border:0;border-right:1px solid rgba(86,103,122,.26);border-bottom:1px solid rgba(86,103,122,.26);font-size:12px;white-space:normal;overflow-wrap:anywhere}.fi-table td{text-align:right;white-space:nowrap}.fi-table th{text-align:center}.fi-table thead th{position:sticky;z-index:3;top:0}.fi-table thead .fi-unit{height:32px;padding:6px 7px}.fi-table thead tr:nth-child(2) th{top:32px;height:36px;white-space:nowrap}.fi-table .fi-id,.fi-table .fi-goal{position:sticky;z-index:2}.fi-table .fi-id{left:0;width:var(--fi-id);text-align:center}.fi-table .fi-goal{left:var(--fi-id);width:var(--fi-goal);text-align:left;border-right:2px solid #96a9bc}.fi-table thead .fi-id,.fi-table thead .fi-goal{z-index:5}.fi-table tbody th.fi-id,.fi-table tbody th.fi-goal{top:auto}.fi-table .fi-child .fi-goal{padding-left:21px}.fi-table .fi-group-start>*{border-top:1.5px solid #75899c}.fi-table .fi-total>*{border-top:2px solid #75899c;border-bottom:2px solid #75899c;font-weight:750}.fi-table .fi-summary{border-right:2px solid #8d9eb0}.fi-table .fi-ytd{font-weight:800}.fi-table td[data-error="true"]{text-decoration:underline dotted;text-underline-offset:3px}.fi-foot{font-size:11.5px;color:#52647a;line-height:1.55;margin:12px 0 0;overflow-wrap:anywhere}
+@media(max-width:700px){.fi-panel{padding:12px 8px}.fi-panelhead{display:grid;grid-template-columns:minmax(0,1fr)}.fi-view{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}.fi-view select{width:100%;min-height:44px}.fi-table{--fi-id:35px;--fi-goal:128px;--fi-period:78px;font-size:12px}.fi-table th,.fi-table td{padding:9px 5px;font-size:11.5px}.fi-table .fi-child .fi-goal{padding-left:12px}.fi-table .fi-goal{overflow-wrap:normal}.fi-table thead .fi-goal{overflow-wrap:anywhere}.fi-scroll{max-height:70vh}.fi-legend{gap:6px 10px}.fi-legend span:last-child{flex-basis:100%}}
+@media print{body:has(#fi.active) .sidebar,body:has(#fi.active) .actions,body:has(#fi.active) .stamp,body:has(#fi.active) .fi-view{display:none}body:has(#fi.active) .main{width:100%;margin:0;padding:0}.fi-scroll{max-height:none;overflow:visible}.fi-table{min-width:0;width:100%!important;--fi-id:26px;--fi-goal:150px;--fi-period:auto;font-size:9px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.fi-table th,.fi-table td{position:static!important;font-size:9px;padding:5px 3px}}
+
+/* V18: standalone RAV register, matching the blue Excel reference. */
+.rav-panel{min-width:0;overflow:hidden;margin-bottom:16px}.rav-panelhead{margin-bottom:12px}.rav-scroll{max-width:100%;max-height:72vh;overflow:auto;border:1px solid #b8c7d7;overscroll-behavior:contain;scrollbar-width:auto}.rav-scroll:focus-visible{outline:2px solid #125b88;outline-offset:2px}.rav-table{--rav-machine:126px;--rav-month:80px;--rav-ytd:109px;--rav-caption-h:38px;width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;font-variant-numeric:tabular-nums;color:#17243a;font-size:13px}.rav-banner{background:#2f75b5;color:white;font-size:17px;font-weight:700;font-style:italic;text-align:center;padding:9px 12px;height:38px;line-height:20px;box-sizing:border-box;white-space:nowrap}.rav-table th,.rav-table td{padding:10px 9px;border-bottom:1px solid #e3eaf1;white-space:nowrap;text-align:right}.rav-table thead th{position:sticky;top:0;z-index:2;background:#d9e2f3;font-weight:700;font-style:italic;text-align:center;color:#17243a}.rav-table .rav-machine-col{width:var(--rav-machine)}.rav-table .rav-month-col{width:var(--rav-month)}.rav-table .rav-ytd-col{width:var(--rav-ytd)}.rav-table .rav-machine{position:sticky;left:0;text-align:left;border-right:1px solid #9db2c5;z-index:1;font-weight:600;background:#fff}.rav-table tbody td{background:#fff}.rav-table tbody tr:nth-child(even) td,.rav-table tbody tr:nth-child(even) .rav-machine{background:#f3f7fb}.rav-table thead .rav-machine{z-index:3;background:#d9e2f3;text-align:center}.rav-table tbody td.rav-ytd{background:#e4edf6;font-weight:700;border-left:1px solid #b4c5d6}.rav-table thead .rav-ytd{background:#c9d9ea;border-left:1px solid #b4c5d6}.rav-warning{color:#8b4500;background:#fff5df;border:1px solid #e8cc8c;padding:10px 12px;margin-bottom:12px;overflow-wrap:anywhere;font-size:12px}.rav-panel .source-note{margin:9px 0 0}.rav-table tbody td:empty{background-image:none}
+@media(max-width:700px){.rav-panel{padding:12px 8px}.rav-table{--rav-machine:94px;--rav-month:77px;--rav-ytd:96px;font-size:12px}.rav-table th,.rav-table td{padding:11px 7px;font-size:12px}.rav-banner{font-size:15px}.rav-scroll{max-height:65vh}}
+@media print{.rav-scroll{overflow:visible;max-height:none}.rav-table{min-width:0!important;--rav-machine:100px;--rav-month:auto;--rav-ytd:85px;font-size:9px;print-color-adjust:exact;-webkit-print-color-adjust:exact}.rav-table th,.rav-table td{position:static!important;font-size:9px;padding:5px 3px}}
+</style>
+<link rel="stylesheet" href="./dashboard-polish.css?v=32">
+<style>
+
+/* V32-Final compatible. Responsive full-content layout, no internal scrolling. */
+:root {--report-gap:14px}
+html,body {max-width:100%;margin:0;scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar {display:none!important;width:0!important;height:0!important}
+.shell {display:grid;grid-template-columns:248px minmax(0,1fr);align-items:start;max-width:100%}
+.sidebar {position:sticky;top:0;inset:auto;top:0;width:100%;height:auto;min-height:100vh;overflow:visible!important;max-width:100%;align-self:start;flex-shrink:0}
+.main {width:100%;margin:0;min-width:0;max-width:100%}
+@media(min-width:701px) and (max-width:1050px){.shell{grid-template-columns:205px minmax(0,1fr)}}
+@media(min-width:701px) and (max-height:790px){.sidebar{position:relative;top:auto;min-height:100vh}.nav{gap:2px}.nav button{min-height:36px;padding-top:8px;padding-bottom:8px}.sidefoot{padding-top:8px}.sidebar .brandlockup{padding-bottom:12px;margin-bottom:10px}}
+@media(max-width:700px){.shell{display:block}.sidebar{position:relative;min-height:0;width:100%}.main{width:100%;margin:0}}
+.main,.section,.grid,.panel,.machine-card,.chartbox,.chart-scroll,.class-plot,.pareto-scroll,.tablewrap,.kpi-scroll,.pm-detail-scroll,.fi-scroll,.rav-scroll,.app-footer-branding {min-width:0;max-width:100%}
+.tablewrap,.kpi-scroll,.pm-detail-scroll,.fi-scroll,.rav-scroll,.chart-scroll,.class-plot,.pareto-scroll,.app-footer-branding,#relTable {overflow:visible!important;height:auto;max-height:none!important;scrollbar-width:none!important;overscroll-behavior:auto!important}
+.tablewrap,.kpi-scroll,.pm-detail-scroll,.fi-scroll,.rav-scroll {border:0;border-radius:0}
+.chartbox,.chartbox.dense-chart {min-width:0!important;width:100%!important;max-width:100%!important;position:relative}
+.chartbox canvas {max-width:100%;min-width:0!important}
+.chart-scroll {display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.chart-scroll[hidden],.chartbox[hidden]{display:none!important}
+.chart-scroll .chart-fallback {min-width:0;max-width:100%}
+.chart-band-title {font-size:12px;color:#53687a;font-weight:600;padding:4px 0 0;overflow-wrap:anywhere}
+.chart-part {min-width:0;max-width:100%;border-top:1px solid #e1e9ef;padding-top:8px}
+.chart-part:first-child{border-top:0;padding-top:0}
+.reliability-chart-grid,.class-machine-grid,.class-perf-charts,.dt-detail-grid {grid-template-columns:minmax(0,1fr)!important}
+.reliability-chart-grid>.panel{margin-bottom:0}
+#reliability .rel-chartbox {height:390px}
+#pm .grid.two,#rca .grid.two{grid-template-columns:minmax(0,1fr)}
+.class-plot,.pareto-scroll{display:grid;grid-template-columns:minmax(0,1fr);gap:7px}
+.class-plot svg,.pareto-scroll svg {min-width:0!important;width:100%!important;height:auto!important;max-height:none!important;display:block}
+.class-swipe-hint,.wide-view-controls{display:none!important}
+.app-footer-branding img {min-width:0!important;max-width:100%;height:auto}
+.tablewrap>table,.kpi-report-table,.pm-detail-table,.rav-table,.fi-table,#relTable table,.dt-register table {width:100%!important;min-width:0!important;max-width:100%;table-layout:fixed;border-collapse:collapse;white-space:normal!important}
+.tablewrap>table th,.tablewrap>table td,.kpi-report-table th,.kpi-report-table td,.pm-detail-table th,.pm-detail-table td,.rav-table th,.rav-table td,.fi-table th,.fi-table td {position:static!important;white-space:normal!important;overflow-wrap:anywhere;word-break:normal;box-shadow:none!important;min-width:0!important;max-width:none!important;height:auto;text-transform:none;letter-spacing:0;line-height:1.4;padding:9px 7px;font-size:12px;vertical-align:middle}
+.tablewrap>table td,.tablewrap>table th{width:auto!important}
+.tablewrap>table .pill{white-space:normal;max-width:100%;overflow-wrap:anywhere;line-height:1.3}
+.tablewrap>table th:first-child,.tablewrap>table td:first-child {width:auto!important}
+.pm-detail-table .pm-machine,.pm-detail-table .pm-remarks,.rav-table .rav-machine,.fi-table .fi-id,.fi-table .fi-goal{width:auto!important;min-width:0!important;max-width:none!important;position:static!important}
+.pm-detail-table th.pm-period-group,.pm-detail-table tbody td{min-width:0!important}
+.pm-detail-table .pm-total th,.pm-detail-table .pm-total td{position:static!important}
+.fi-table col.fi-period-width,.rav-table col.rav-month-col{width:auto!important}
+.fi-table th,.fi-table td,.rav-table th,.rav-table td,.pm-detail-table th,.pm-detail-table td{font-size:11.5px;padding:8px 5px}
+.report-band {min-width:0;max-width:100%;margin-bottom:16px;border:1px solid #d4dfe7;border-radius:5px;overflow:visible}
+.report-band:last-child{margin-bottom:0}
+.report-band-heading{padding:9px 12px;font-size:12px;font-weight:700;color:#214660;background:#edf4f8;border-bottom:1px solid #d4dfe7;overflow-wrap:anywhere}
+.report-band table{margin:0}
+/* Executive overview: purpose-built hierarchy, not an Excel-style matrix. */
+.kpi-panel{background:#fff;border:1px solid #d4dfe7;overflow:visible}
+.kpi-banner{background:#123f59!important;border-radius:5px 5px 0 0;padding:18px 20px;align-items:center}
+.kpi-banner h2{font-size:20px!important;line-height:1.3;color:#fff!important}
+.kpi-banner p{font-size:12px;color:#d4e4ed}
+.kpi-meta{padding:11px 18px;border-bottom:1px solid #e0e8ee}
+.kpi-scroll{padding:18px;isolation:auto}
+.kpi-report-section{margin:0 0 22px;min-width:0}
+.kpi-report-section:last-child{margin:0}
+.kpi-report-heading{margin:0 0 10px;padding:0 0 8px;border-bottom:2px solid #175b83;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;justify-content:space-between}
+.kpi-report-heading h3{margin:0;font-size:16px;color:#153d58;letter-spacing:0}
+.kpi-report-heading span{font-size:12px;color:#607589}
+.kpi-report-table{border:0;color:#17354d;font-size:12px;line-height:1.4}
+.kpi-report-table thead th{background:#173e58!important;color:#fff!important;text-align:center;font-weight:650;line-height:1.4}
+.kpi-report-table thead th:first-child{text-align:left}
+.kpi-report-table tbody th,.kpi-report-table tbody td{border-bottom:1px solid #dce6ed;border-right:1px solid #e3eaf0;padding:9px 7px}
+.kpi-report-table tbody th{text-align:left;font-weight:650;background:#f5f8fa;color:#173d57;overflow-wrap:anywhere}
+.kpi-report-table tbody td{text-align:center;background:#fff;font-variant-numeric:tabular-nums;font-weight:550}
+.kpi-report-table tbody td.kpi-status-cell{font-weight:750}
+.kpi-report-table .kpi-subgoal th{font-weight:500;padding-left:17px;background:#fff}
+.kpi-report-table .kpi-group-row th{background:#e4edf3;color:#1b4762;font-size:12px;padding:9px 10px;text-align:left;letter-spacing:.1px;font-weight:750}
+.kpi-report-table .kpi-num{font-size:10px;color:#647b8a;display:inline-block;margin-right:6px;white-space:nowrap}
+.kpi-report-table .kpi-blank{color:#738594}
+.kpi-report-table .kpi-target-neutral{background:#e7f0f6;font-weight:700}
+.kpi-report-table .kpi-rating-cell{font-weight:750}
+.kpi-report-table .kpi-summary-goal{width:34%}
+.kpi-report-table .kpi-month-goal{width:var(--goal-width,24%)}
+.rca-field-table th,.rca-field-table td{position:static!important;min-width:0!important;overflow-wrap:anywhere;white-space:pre-wrap}
+.dt-register td:nth-child(2){min-width:0!important;max-width:none!important}
+@media(max-width:1000px){.rca-investigations{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:850px){
+ .tablewrap>table.responsive-table{display:block;width:100%;table-layout:auto}
+ .responsive-table thead{display:none}
+ .responsive-table tbody{display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
+ .responsive-table tbody tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid #d4dfe7;border-radius:4px;overflow:hidden}
+ .responsive-table tbody td{display:block;padding:9px 10px!important;width:auto!important;background:#fff!important;min-width:0;overflow-wrap:anywhere;border-bottom:1px solid #e6edf2}
+ .responsive-table tbody td:first-child{grid-column:1/-1;background:#e7eff5!important;color:#173d57;font-weight:700;font-size:13px!important}
+ .responsive-table tbody td:not(:first-child)::before{content:attr(data-label);display:block;font-size:10.5px;font-weight:650;color:#53687a;margin-bottom:3px}
+ .responsive-table tbody td[data-wide='true']{grid-column:1/-1}
+ .kpi-report-table th,.kpi-report-table td{font-size:11px;padding:7px 5px}
+ .kpi-scroll{padding:11px}
+ .kpi-banner{padding:14px 12px}
+ .kpi-banner h2{font-size:17px!important}
+ .kpi-meta{padding:10px 12px}
+ .kpi-report-table .kpi-num{display:block;margin:0 0 3px}
+ .kpi-report-table .kpi-subgoal th{padding-left:7px}
+ .kpi-report-table .kpi-summary-goal{width:32%}
+ .kpi-report-table .kpi-month-goal{width:var(--goal-width,36%)}
+ #reliability .rel-chartbox{height:315px}
+ .report-band-heading{font-size:11px;padding:8px}
+ .fi-table th,.fi-table td,.rav-table th,.rav-table td,.pm-detail-table th,.pm-detail-table td{padding:7px 4px;font-size:11px}
+ .class-perf-chart,.pareto-panel{padding:8px}
+ .pm-detail-body{padding:10px}
+ .pm-detail-table .pm-coverage-sub{white-space:normal}
+ .app-footer-branding{padding:5px}
+}
+@media(max-width:380px){.kpi-report-table th,.kpi-report-table td{font-size:10px;padding:6px 3px}.kpi-scroll{padding:8px}.pm-detail-table th,.pm-detail-table td{font-size:10.5px;padding:6px 3px}.card .value{font-size:18px}.pm-ring-counts{font-size:10px}}
+@media print{.shell{display:block}.sidebar{display:none!important}.main{width:100%;padding:0}.report-band{break-inside:auto}.chart-part,.class-perf-chart,.rca-investigation{break-inside:avoid}.kpi-report-table,.fi-table,.rav-table,.pm-detail-table{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+/* Final wrapping and fit safeguards. */
+.fi-table .fi-goal{overflow-wrap:anywhere!important;white-space:normal!important}
+@media(max-width:850px){.fi-table .fi-child .fi-goal{padding-left:6px}}
+.chartbox canvas{display:block!important;box-sizing:border-box;max-width:100%!important;max-height:100%}
+.report-band .responsive-table{width:100%;table-layout:fixed;white-space:normal!important}
+.report-band .responsive-table th,.report-band .responsive-table td{white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal;min-width:0!important;position:static!important;text-align:left;padding:9px 10px}
+.report-band .responsive-table th:first-child,.report-band .responsive-table td:first-child{width:26%;box-shadow:none!important}
+.responsive-table td[data-wide='true']{white-space:normal!important;overflow-wrap:anywhere!important}
+@media(max-width:850px){.report-band .responsive-table{display:block}.report-band .responsive-table thead{display:none}.report-band .responsive-table tbody{display:block}.report-band .responsive-table tbody tr{display:block;border:0;border-bottom:1px solid #dce6ed;border-radius:0}.report-band .responsive-table tbody td{width:100%!important;display:block}.report-band .responsive-table tbody td:first-child{width:100%!important}.report-band .responsive-table td[data-wide='true']{white-space:normal!important;overflow-wrap:anywhere!important}.kpi-report-table tbody th,.kpi-report-table tbody td{overflow-wrap:anywhere!important}}
+
+/* Current-month downtime/RCA: report sequence with no inner scrolling. */
+.machine-incidents{margin-top:20px;padding-top:17px;border-top:1px solid #d4dfe7;min-width:0;container-type:inline-size}
+.machine-incidents .detail-heading{margin-bottom:12px}
+.incident-grid{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:14px;min-width:0}
+.incident-card{min-width:0;max-width:100%;border:1px solid #c9d9e5;background:#fff;border-radius:5px;overflow:visible!important;break-inside:avoid}
+.incident-card .incident-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:5px 10px;background:#165b85;color:#fff;padding:11px 12px;border-radius:4px 4px 0 0}
+.incident-card .incident-header h5{font-size:13px;font-weight:700;line-height:1.35;color:#fff;margin:0;min-width:0;overflow-wrap:anywhere}
+.incident-card .incident-header span{font-size:11px;color:#e5f3fd;line-height:1.4;overflow-wrap:anywhere}
+.incident-card table{width:100%!important;max-width:100%;min-width:0!important;table-layout:fixed;border-collapse:collapse;white-space:normal!important;font-size:12px}
+.incident-card table th,.incident-card table td{position:static!important;min-width:0!important;max-width:none!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important;word-break:normal;vertical-align:top;box-shadow:none!important;border-bottom:1px solid #dce6ee;line-height:1.5;padding:9px 8px;text-transform:none;letter-spacing:0}
+.incident-dt-table thead th{background:#e1edf6!important;color:#173d57!important;font-size:11px;text-align:right}
+.incident-dt-table thead th:first-child{text-align:left}
+.incident-dt-table tbody td{background:#fff!important;color:#17243a;text-align:right}
+.incident-dt-table tbody tr:nth-child(even) td{background:#f2f7fb!important}
+.incident-dt-table tbody td:first-child{text-align:left}
+.incident-dt-table tfoot th,.incident-dt-table tfoot td{background:#dfeaf3!important;color:#173d57!important;font-weight:700;text-align:right}
+.incident-dt-table tfoot th{text-align:left}
+.dt-rank{color:#647b8a;font-weight:600;margin-right:3px}
+.incident-card .incident-problem{padding:10px 12px;background:#e7f1f8;color:#173d57;border-bottom:1px solid #c9d9e5}
+.incident-problem strong{font-size:11px;letter-spacing:.2px}.incident-problem p{margin:3px 0 0;font-size:13px;line-height:1.45;font-weight:650;overflow-wrap:anywhere}.incident-problem small{display:block;margin-top:5px;font-size:11px;color:#52647a}
+.incident-card .rca-field-table th{width:28%;background:#edf4f8!important;color:#125272!important;font-size:11.5px;text-align:left}
+.incident-card .rca-field-table td{width:72%;background:#fff!important;color:#17243a!important;font-size:12px}
+.incident-card .rca-field-table tr:nth-child(even) td{background:#f7fafc!important}
+.incident-card table tr:last-child>*{border-bottom:0}
+.incident-pareto{margin-top:14px;min-width:0;max-width:100%;overflow:visible!important}
+@container (min-width:760px){
+ .incident-grid.two-columns{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .incident-grid.complete-grid .incident-dt{grid-area:1/1/2/2}
+ .incident-grid.complete-grid .incident-rca-1{grid-area:2/1/3/2}
+ .incident-grid.complete-grid .incident-rca-2{grid-area:1/2/2/3}
+ .incident-grid.complete-grid .incident-rca-3{grid-area:2/2/3/3}
+ .incident-grid.two-columns:not(.complete-grid) .incident-dt,.incident-grid.two-columns:not(.complete-grid) .incident-rca-1{grid-column:1}
+ .incident-grid.two-columns:not(.complete-grid) .incident-rca-2,.incident-grid.two-columns:not(.complete-grid) .incident-rca-3{grid-column:2}
+ .incident-grid.two-columns:not(.complete-grid){grid-auto-flow:row dense}
+}
+@media(max-width:480px){.incident-card .incident-header{padding:10px}.incident-card .incident-problem{padding:9px 10px}.incident-card table th,.incident-card table td{padding:8px 5px;font-size:11.5px}.incident-card .rca-field-table th{width:30%;font-size:11px}.incident-card .rca-field-table td{width:70%;font-size:12px}.incident-card .incident-header h5{font-size:12px}}
+
+/* Equal-sized current-month report cards. */
+@container (min-width:760px){
+ .incident-grid.two-columns{align-items:stretch}
+ .incident-grid.complete-grid{grid-template-rows:repeat(2,1fr)}
+ .incident-grid.two-columns .incident-card{display:flex;flex-direction:column;align-self:stretch;min-height:0}
+ .incident-grid.two-columns .incident-card .incident-header{flex:0 0 auto;min-height:42px;align-items:center}
+ .incident-grid.two-columns .incident-card .incident-problem{flex:0 0 auto}
+ .incident-grid.two-columns .incident-card table{flex:1 0 auto;height:auto}
+ .incident-grid.two-columns .incident-card table th,.incident-grid.two-columns .incident-card table td{vertical-align:middle}
+ .incident-grid.two-columns .incident-card table thead,.incident-grid.two-columns .incident-card table tfoot{height:36px}
+ .incident-grid.two-columns .incident-card table tbody{height:100%}
+}
+
+
+/* Pareto categories are full, wrapped descriptions aligned with the bars. */
+.pareto-band{min-width:0;width:100%;max-width:100%;padding-bottom:10px}
+.pareto-band+.pareto-band{border-top:1px solid #dfe8ef;padding-top:10px}
+.pareto-category-labels{display:grid;align-items:start;width:100%;box-sizing:border-box;gap:0;margin-top:-3px}
+.pareto-category-label{min-width:0;padding:0 5px;font-size:12px;font-weight:600;color:#243e53;text-align:center;line-height:1.4;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+@media(max-width:700px){.pareto-category-label{font-size:11px;padding:0 3px;line-height:1.35}}
+</style>
+
+<style>
+/* V25: single complete data matrices; compact desktop, intact records on narrow screens. */
+.unified-matrix-wrap{padding:0!important;min-width:0;max-width:100%;overflow:visible!important}
+.kpi-unified,.fi-unified,.pm-unified,.rav-unified{width:100%!important;table-layout:fixed!important;border-collapse:collapse!important;min-width:0!important;margin:0!important;}
+.unified-matrix th,.unified-matrix td{box-shadow:none!important;border:1px solid #dce5eb;vertical-align:middle;text-align:center;position:static!important;min-width:0!important;max-width:none!important;line-height:1.35;font-variant-numeric:tabular-nums}
+.unified-matrix tbody td{white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important;font-size:clamp(9px,.7vw,12px)!important;padding:8px 2px!important;}
+.unified-matrix thead th{font-size:clamp(9px,.73vw,12px)!important;padding:9px 3px!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;text-align:center!important;}
+.unified-matrix .matrix-goal{white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;text-align:left!important;font-size:clamp(10px,.82vw,13px)!important;padding:8px 6px!important;width:auto!important;}
+.kpi-unified thead th{background:#174860!important;color:#fff!important;}
+.kpi-unified thead .matrix-criteria-head{background:#e4edf4!important;color:#193e56!important;}
+.kpi-unified thead .matrix-ytd-head{background:#28749b!important;}
+.kpi-unified .kpi-threshold{background:#f1f5f8;}
+.kpi-unified .kpi-parent th.matrix-goal{background:#e6eef5;color:#173d57;font-weight:750;}
+.kpi-unified .kpi-subgoal th.matrix-goal{background:#f7f9fb;padding-left:10px!important;}
+.kpi-unified .matrix-group-start>*{border-top:2px solid #8ba5b7;}
+.matrix-ytd{font-weight:750!important;}
+.kpi-unified .kpi-num{font-size:9px;margin-right:4px;}
+.pm-unified .pm-pair{display:flex;justify-content:space-between;gap:3px;align-items:center;padding:1px 3px;}
+.pm-unified .pm-pair small{font-size:9px;color:#53687a;}.pm-unified .pm-pair b{font-size:10px;font-weight:600;}
+.pm-unified .pm-comp{display:block;padding:3px 1px;margin-top:3px;font-weight:700;}
+.pm-unified .matrix-remarks{white-space:normal!important;overflow-wrap:anywhere!important;font-size:10px!important;text-align:left;}
+.pm-unified .pm-total .pm-pair small{color:#e7f1f8;}
+.fi-unified tbody .fi-goal{width:auto!important;}
+.fi-unified .kpi-num{display:inline-block;margin-right:7px;font-size:10px;font-weight:700;}
+.fi-unified tbody .fi-child .matrix-goal{padding-left:15px!important;}
+.fi-unified tbody td{font-size:clamp(10px,.82vw,13px)!important;}
+/* Same table and same records at narrow widths: field labels travel with their values. */
+.matrix-record-view .unified-matrix{display:block!important;table-layout:auto!important;}
+.matrix-record-view .unified-matrix colgroup,.matrix-record-view .unified-matrix thead{display:none!important;}
+.matrix-record-view .unified-matrix tbody{display:grid!important;gap:10px;grid-template-columns:minmax(0,1fr);}
+.matrix-record-view .unified-matrix tr{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(78px,100%),1fr));gap:0;border:1px solid #cbd9e3;border-radius:4px;overflow:visible;}
+.matrix-record-view .unified-matrix tr .matrix-goal{display:block!important;grid-column:1/-1;min-width:0!important;width:auto!important;background:#e6eef5;color:#173d57;font-size:13px!important;padding:10px 9px!important;border:0;border-bottom:1px solid #cadbe6;}
+.matrix-record-view .unified-matrix tr td{display:block!important;text-align:center!important;white-space:normal!important;font-size:12px!important;padding:8px 4px!important;min-width:0!important;width:auto!important;overflow-wrap:anywhere!important;}
+.matrix-record-view .unified-matrix tr td::before{content:attr(data-label);display:block;font-weight:650;font-size:10px;line-height:1.3;margin-bottom:4px;opacity:.88;}
+.matrix-record-view .unified-matrix tr .matrix-remarks{grid-column:1/-1;text-align:left!important;}
+.matrix-record-view .pm-unified .pm-pair{justify-content:center;gap:8px;}
+.matrix-record-view .pm-unified .pm-pair b{font-size:12px;}
+.matrix-record-view .fi-unified .fi-total .matrix-goal{font-weight:800;}
+.incident-card .rca-field-table td{min-height:32px;}.incident-card .rca-field-table tr{min-height:32px;}
+@media print{.unified-matrix{print-color-adjust:exact;-webkit-print-color-adjust:exact;}.matrix-record-view .unified-matrix tr{break-inside:avoid;}}
+</style>
+<style>
+/* V25: one PM comparison table, all periods side-by-side, without overflow. */
+#pm .pm-month-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#pm .pm-month-toolbar select{width:min(100%,265px);max-width:100%;min-width:0}
+#pm .pm-month-toolbar .small{line-height:1.4;overflow-wrap:anywhere}
+#pm .pm-detail-banner{background:#174860!important;color:#fff;padding:14px 16px;gap:8px}
+#pm .pm-detail-banner h2{color:#fff!important;font-size:16px;line-height:1.35}
+#pm .pm-target-label{font-size:12px;color:#fff;font-weight:650;white-space:normal}
+#pmDetailTable{container-type:inline-size;overflow:visible!important;max-height:none!important;height:auto!important;border:1px solid #cbd9e3}
+#pmDetailTable .pm-compare-table{width:100%!important;min-width:0!important;max-width:100%;table-layout:fixed;border-collapse:collapse;white-space:normal!important;font-variant-numeric:tabular-nums;color:#17354d}
+#pmDetailTable .pm-compare-machine-col{width:17%}
+#pmDetailTable th,#pmDetailTable td{padding:0!important;position:static!important;min-width:0!important;max-width:none!important;white-space:normal!important;vertical-align:middle;box-shadow:none!important;border:1px solid #d4dfe7;line-height:1.35;text-align:center;overflow-wrap:anywhere}
+#pmDetailTable thead th{background:#174860!important;color:#fff!important;font-weight:700;font-size:12px;letter-spacing:0;text-transform:none}
+#pmDetailTable thead th:first-child{padding:9px 6px!important;text-align:left}
+#pmDetailTable .pm-compare-heading>span{display:block;padding:9px 3px}
+#pmDetailTable .pm-compare-ytd{background:#28749b!important}
+#pmDetailTable .pm-compare-subheads,#pmDetailTable .pm-compare-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+#pmDetailTable .pm-compare-subheads{background:#e6eef4;color:#213f58;border-top:1px solid #cbd9e3;font-size:10.5px}
+#pmDetailTable .pm-compare-subheads>span{padding:7px 2px;line-height:1.25;overflow-wrap:anywhere}
+#pmDetailTable .pm-compare-value{display:flex;justify-content:center;align-items:center;min-width:0;padding:10px 3px;min-height:37px;font-size:12px;font-weight:500;border-right:1px solid #e0e8ee}
+#pmDetailTable .pm-compare-value:last-child{border-right:0}
+#pmDetailTable .pm-compare-value b{font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+#pmDetailTable .pm-compare-value small{display:none}
+#pmDetailTable .pm-compare-value.pm-good{background:#d8f3df!important;color:#086c32}
+#pmDetailTable .pm-compare-value.pm-bad{background:#fce0e0!important;color:#b20d19}
+#pmDetailTable .pm-compare-value.pm-na{background:#f2f5f7!important;color:#687a8a}
+#pmDetailTable tbody th.pm-compare-machine{text-align:left;padding:9px 7px!important;font-size:12px;color:#17354d;background:#f1f5f8!important;font-weight:650}
+#pmDetailTable tbody td{background:#fff!important}
+#pmDetailTable tbody tr:nth-child(even) td{background:#f7fafc!important}
+#pmDetailTable .pm-compare-total th,#pmDetailTable .pm-compare-total td{background:#e4eef5!important;border-top:2px solid #91aabc;color:#17354d;font-weight:750}
+#pmDetailTable .pm-compare-total b{font-weight:750}
+@container (max-width:800px){
+ #pmDetailTable .pm-compare-machine-col{width:23%}
+ #pmDetailTable .pm-compare-subheads{display:none}
+ #pmDetailTable .pm-compare-values{display:grid;grid-template-columns:minmax(0,1fr)}
+ #pmDetailTable .pm-compare-value{padding:5px 3px;min-height:0;flex-direction:column;border-right:0;border-bottom:1px solid #e1e8ee;gap:2px;font-size:11.5px}
+ #pmDetailTable .pm-compare-value:last-child{border-bottom:0}
+ #pmDetailTable .pm-compare-value small{display:block;font-size:10px;font-weight:550;line-height:1.25;overflow-wrap:anywhere}
+ #pmDetailTable tbody th.pm-compare-machine{font-size:11px;padding:7px 4px!important}
+ #pmDetailTable thead th{font-size:11px}
+}
+@media(max-width:700px){#pm .pm-month-toolbar{display:grid;grid-template-columns:minmax(0,1fr);gap:5px}#pm .pm-month-toolbar select{width:100%}#pm .pm-detail-banner{padding:12px 10px}#pm .pm-detail-body{padding:8px}#pm .pm-detail-controls{margin-bottom:9px}}
+</style>
+
+<style>
+/* V26: permanently accessible navigation, one continuous DT/MTTR/MTBF chart per metric, one RAV matrix. */
+@media screen{
+ .shell{align-items:start;overflow:visible!important}
+ .sidebar{position:sticky!important;top:0!important;inset:auto;top:0!important;min-height:0!important;height:100vh;height:100dvh;max-height:100dvh;align-self:start;overflow:visible!important;padding:clamp(10px,2.4vh,24px) 15px 10px;z-index:20;}
+ .sidebar .brandlockup{margin-bottom:clamp(5px,1.4vh,18px);padding-bottom:clamp(7px,1.5vh,18px);flex-shrink:0}
+ .sidebar .nav{gap:clamp(2px,.6vh,5px);flex-shrink:0}
+ .sidebar .nav button{min-height:clamp(29px,5.5vh,44px);padding:clamp(5px,1vh,10px) 9px;font-size:13px;line-height:1.22}
+ .sidebar .sidefoot{flex-shrink:0;font-size:11px;padding:8px 3px 0;line-height:1.4}
+ @media(min-width:701px) and (max-height:660px){.sidebar .sidefoot{display:none}.sidebar .nav-caption{padding-bottom:5px}.sidebar .brandlockup{padding-bottom:9px;margin-bottom:8px}.sidebar .brandmark{width:44px;height:39px;flex-basis:44px}.sidebar .brandmark img{width:36px}.sidebar .brandtext small{font-size:10px}.sidebar .nav button{min-height:29px;font-size:12px}}
+ @media(min-width:701px) and (max-height:440px){.sidebar .nav,.sidebar .nav-caption{display:none!important}.sidebar .mobile-nav{display:block!important}}
+ @media(max-width:700px){.sidebar{width:100%;height:auto;max-height:none;min-height:0!important;padding:8px 12px 10px;box-shadow:0 2px 4px #102f4620}.sidebar .brandlockup{padding:0 0 5px;margin:0 0 4px;border:0}.sidebar .brandmark{width:36px;height:31px;flex-basis:36px}.sidebar .brandmark img{width:30px}.sidebar .brandtext strong{font-size:13px}.sidebar .brandtext small{font-size:10px;margin-top:1px}.sidebar .nav-caption,.sidebar .sidefoot{display:none!important}.sidebar .mobile-nav label{font-size:10px}.sidebar .mobile-nav select{min-height:37px;height:37px;margin-top:3px;font-size:13px;padding:5px 8px}}
+ .reliability-chart-grid{grid-template-columns:minmax(0,1fr)!important;gap:14px}
+ .reliability-plot{width:100%;min-width:0;max-width:100%;overflow:visible}
+ .reliability-plot svg{width:100%;height:auto;display:block;max-width:100%}
+ .rel-legend{display:flex;gap:8px 14px;flex-wrap:wrap;align-items:center;color:#52687a;font-size:11px;margin:3px 0 0;line-height:1.35}
+ .rel-legend span{display:inline-flex;align-items:center;gap:5px}.rel-legend i{display:inline-block;width:11px;height:11px}.rel-legend .rel-target-key{width:14px;height:3px;background:#002060}
+ #ravTable{container-type:inline-size;overflow:visible!important}
+ #ravTable .rav-unified{display:table!important;table-layout:fixed!important;width:100%!important;min-width:0!important;max-width:100%!important}
+ #ravTable .rav-unified thead{display:table-header-group!important}#ravTable .rav-unified tbody{display:table-row-group!important}#ravTable .rav-unified tr{display:table-row!important}#ravTable .rav-unified th,#ravTable .rav-unified td{display:table-cell!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important;padding:9px 2px!important;text-align:center!important;line-height:1.25;font-size:clamp(9px,1.2cqi,13px)!important}
+ #ravTable .rav-unified tbody th.rav-machine{text-align:left!important;padding-left:5px!important;font-size:clamp(9px,1.2cqi,13px)!important}
+ #ravTable .rav-unified tbody td.rav-ytd{background:#e4edf6!important;color:#173d57;font-weight:750!important;border-left:2px solid #9eb6c8}
+ #ravTable .rav-unified thead th.rav-ytd{background:#b9d3e7!important;border-left:2px solid #9eb6c8}
+ .rav-compact-value{display:none}.rav-full-value{display:inline}
+ @container (max-width:670px){
+  #ravTable .rav-full-value{display:none!important}#ravTable .rav-compact-value{display:inline!important}
+  #ravTable .rav-unified th,#ravTable .rav-unified td,#ravTable .rav-unified tbody th.rav-machine{font-size:var(--rav-compact-font,9px)!important;padding:7px 0.5px!important;letter-spacing:-.15px}
+  #ravTable .rav-unified tbody th.rav-machine{padding-left:2px!important}
+ }
+}
+@media print{.sidebar{display:none!important}.rav-compact-value{display:none!important}.rav-full-value{display:inline!important}.reliability-plot{break-inside:avoid}}
+</style>
+
+<style>
+/* V27: compact incident tables, content-driven rows, one continuous Pareto. */
+.machine-metric b.not-operated{background:#e7edf2!important;color:#52687a;font-size:clamp(11px,1.1vw,15px);font-weight:650;line-height:1.3;overflow-wrap:normal;word-break:normal;}
+.machine-incidents{margin-top:14px;padding-top:12px}
+.machine-incidents .detail-heading{margin-bottom:8px}
+.machine-incidents .detail-heading h4{font-size:14px}
+.incident-grid{gap:10px;align-items:start}.incident-column{display:flex;flex-direction:column;gap:10px;min-width:0;align-items:stretch}.incident-column>.incident-card{width:100%;flex:none}
+.incident-card .incident-header{padding:6px 9px;min-height:0;gap:3px 7px}
+.incident-card .incident-header h5{font-size:12px;line-height:1.3}
+.incident-card .incident-header span{font-size:10px;line-height:1.3}
+.incident-card .incident-problem{padding:5px 9px}
+.incident-problem strong{font-size:10px}
+.incident-problem p{font-size:12px;line-height:1.32;margin:2px 0 0}
+.incident-problem small{font-size:10px;margin-top:3px}
+.incident-card table th,.incident-card table td{font-size:11.5px;line-height:1.35;padding:4px 7px;vertical-align:top;white-space:pre-wrap!important}
+.incident-card .incident-dt-table th,.incident-card .incident-dt-table td{padding:5px 7px;vertical-align:middle;font-size:11.5px}
+.incident-card .rca-field-table th{width:24%;font-size:11px}
+.incident-card .rca-field-table td{width:76%;font-size:11.5px;min-height:0}
+.incident-card .rca-field-table tr{min-height:0;height:auto}
+.incident-pareto{margin-top:10px;padding:11px}
+.incident-pareto h4{margin:0 0 6px}
+.incident-pareto .pareto-scroll{display:block;overflow:visible!important}
+.incident-pareto .pareto-band{padding:0;margin:0;border:0}
+.incident-pareto .pareto-single{display:block;width:100%!important;height:auto!important;min-width:0!important;max-width:100%}
+@container (min-width:760px){
+ .incident-grid.two-columns{align-items:start;grid-auto-rows:auto}
+ .incident-grid.complete-grid{grid-template-rows:auto}
+ .incident-grid.two-columns .incident-card{display:flex;flex-direction:column;align-self:stretch;min-height:0}
+ .incident-grid.two-columns .incident-card .incident-header{min-height:0;flex:0 0 auto}
+ .incident-grid.two-columns .incident-card table{flex:0 0 auto;height:auto}
+ .incident-grid.two-columns .incident-card table thead,.incident-grid.two-columns .incident-card table tbody,.incident-grid.two-columns .incident-card table tfoot{height:auto}
+ .incident-grid.two-columns .incident-card table th,.incident-grid.two-columns .incident-card table td{vertical-align:top}
+ .incident-grid.two-columns .incident-card .incident-dt-table th,.incident-grid.two-columns .incident-card .incident-dt-table td{vertical-align:middle}
+}
+@media(max-width:480px){.incident-card .incident-header{padding:7px 8px}.incident-card .incident-problem{padding:6px 8px}.incident-card table th,.incident-card table td{padding:5px 4px;line-height:1.4}.incident-card .rca-field-table th{width:28%}.incident-card .rca-field-table td{width:72%}.incident-card .incident-dt-table th,.incident-card .incident-dt-table td{padding:5px 4px}.incident-pareto{padding:8px}}
+</style>
+<style>
+/* V30 final mobile polish. One record / chart stays together, without overflow. */
+@media screen and (max-width:700px){
+ html:not(.report-mode) .sidebar{padding:8px 12px 9px!important;top:0!important;z-index:30}
+ html:not(.report-mode) .sidebar .brandlockup{gap:9px;margin-bottom:5px;padding-bottom:4px}
+ html:not(.report-mode) .mobile-nav select{height:44px;font-size:14px;margin-top:3px}
+ html:not(.report-mode) .main{padding:12px 10px 22px!important;min-width:0}
+ html:not(.report-mode) .top{padding:12px!important;margin-bottom:10px!important;gap:10px}
+ html:not(.report-mode) .top h1{font-size:22px;line-height:1.2;overflow-wrap:anywhere}
+ html:not(.report-mode) .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:8px}
+ html:not(.report-mode) .actions .btn{min-width:0!important;width:100%;justify-content:center;min-height:44px;padding:8px 6px;font-size:12px}
+ html:not(.report-mode) .panel,html:not(.report-mode) .machine-card{min-width:0;max-width:100%;margin-bottom:10px}
+ html:not(.report-mode) .machine-card{padding:10px!important}
+ html:not(.report-mode) .machine-owner{align-items:center;gap:10px}
+ html:not(.report-mode) .machine-owner p{font-size:12px;overflow-wrap:anywhere}
+ html:not(.report-mode) .machine-metric{padding:7px 5px;min-width:0}
+ html:not(.report-mode) .machine-metric b{font-size:clamp(11px,3.1vw,15px);line-height:1.25;white-space:normal;overflow-wrap:normal}
+ html:not(.report-mode) .machine-metric small{font-size:10px;line-height:1.25}
+ html:not(.report-mode) .class-perf-chart{padding:8px!important;min-width:0}
+ html:not(.report-mode) .class-perf-chart header,.class-performance-header{flex-wrap:wrap;gap:6px}
+ html:not(.report-mode) .class-plot svg{width:100%;height:auto;max-width:100%}
+ html:not(.report-mode) .class-perf-legend{gap:5px 10px;font-size:11px;line-height:1.4}
+ html:not(.report-mode) .incident-grid{grid-template-columns:minmax(0,1fr)!important}
+ html:not(.report-mode) .incident-card .rca-field-table td{overflow-wrap:anywhere;white-space:normal}
+ html:not(.report-mode) .matrix-record-view .unified-matrix tr td{font-variant-numeric:tabular-nums}
+ html:not(.report-mode) .app-footer-branding{width:100%;min-width:0}
+ html:not(.report-mode) .app-footer-branding img{min-width:0!important;width:100%;max-width:100%;height:auto}
+}
+</style>
+<link rel="stylesheet" href="./report-export.css?v=32"><script src="./report-export.js?v=32"></script></head><body><div class="shell"><aside class="sidebar"><div class="brand brandlockup"><span class="brandmark"><img src="./tripack-logo.png" alt="Tri-Pack Films Limited logo" width="39" height="32"></span><div class="brandtext"><strong>Tri-Pack Films Limited</strong><small>U&amp;M Performance Dashboard</small></div></div><div class="nav-caption" aria-hidden="true">REPORT SECTIONS</div><nav class="nav" id="nav" aria-label="Dashboard sections">
+<button class="active" data-tab="overview" aria-current="page">Executive Overview</button><button data-tab="reliability">Machine Downtime Performance</button><button data-tab="pm">PM Compliance</button><button data-tab="rm">Mechanical R&M</button><button data-tab="waste">Wastage</button><button data-tab="rav">RAV</button><button data-tab="classes">Class A / B / C Machines</button><button data-tab="fi">Financial Impact</button>
+</nav><div class="mobile-nav"><label for="mobileTab">Dashboard section</label><select id="mobileTab"></select></div><div class="sidefoot">Published report<br>Published snapshot<br>Refresh to check for updates<br><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a></div></aside>
+<main class="main"><header class="top"><div class="heading-block"><div class="eyebrow">UTILITIES &amp; MAINTENANCE</div><h1 id="pageTitle">Executive Overview</h1><div class="sub" id="pageSubtitle">Monthly performance, YTD results and KPI ratings</div></div><div class="actions"><button class="btn" id="refreshButton" onclick="refresh()"><svg class="refresh-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 8a7 7 0 0 1 12-1l2 5M4 12l2 5a7 7 0 0 0 12-1"/></svg><span id="refreshLabel">Refresh Data</span></button><button class="btn primary" id="exportButton" onclick="downloadReport()"><svg class="export-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 15v5h16v-5"/></svg><span id="exportLabel">Export PDF</span></button></div></header><div class="stamp" id="stamp" role="status" aria-live="polite" data-state="loading">Loading data...</div><div id="exportNotice" role="status" aria-live="polite" hidden></div><p class="mobile-guide">All reporting sections are displayed at the available screen width.</p>
+<section class="section active" id="overview"><div class="panel kpi-panel"><div class="kpi-banner"><div><h2 id="kpiScoreTitle">U&amp;M Performance Goals &amp; KPI Scorecard</h2><p>YTD performance, monthly results and rating thresholds</p></div><span class="kpi-period" id="kpiScorePeriod">2026</span></div><div class="kpi-meta"><div class="legend"><span><i class="dot" style="background:#C6EFCE"></i>Favorable</span><span><i class="dot" style="background:#FFC7CE"></i>Unfavorable</span><span><i class="dot" style="background:#c1ebf9"></i>2026 target</span></div><span>All reported KPIs</span></div><div id="kpiScorecard" class="kpi-scroll" role="region" aria-labelledby="kpiScoreTitle" tabindex="0"><div class="empty">Loading KPI scorecard...</div></div></div></section>
+<section class="section" id="reliability"><div class="toolbar"><label for="relMonth">Reporting month</label><select id="relMonth" onchange="renderReliability()"></select><label for="machineFilter">Machine</label><select id="machineFilter" onchange="renderReliability()"><option value="all">All machines</option></select></div><div class="grid cards" id="relCards"></div><div class="grid reliability-chart-grid"><div class="panel"><div class="panelhead"><h2>Machine-wise DT% vs Target</h2></div><div class="reliability-plot" id="relDtChart"></div></div><div class="panel"><div class="panelhead"><h2>MTTR vs Target (Hours)</h2></div><div class="reliability-plot" id="relMttrChart"></div></div><div class="panel rel-mtbf-panel"><div class="panelhead"><div><h2>MTBF vs Target (Hours)</h2><p class="hint">Zero downtime with positive available hours is always green.</p></div></div><div class="reliability-plot" id="relMtbfChart"></div></div></div></section>
+<section class="section" id="pm">
+ <div class="toolbar pm-month-toolbar"><label for="pmPeriod">Reporting month</label><select id="pmPeriod" onchange="renderPM()" aria-label="Select PM reporting month"></select><span id="pmSelectionNote" class="small" role="status"></span></div>
+ <div class="grid cards" id="pmCards"></div>
+ <div class="panel pm-detail-panel"><div class="pm-detail-banner"><h2 id="pmDetailTitle">PM Compliance | Machine-wise Performance</h2><span id="pmTargetLabel" class="pm-target-label"></span></div>
+ <div class="pm-detail-body"><div class="pm-detail-controls"><div class="legend"><span><i class="dot" style="background:#16a34a"></i>At or above target</span><span><i class="dot" style="background:#dc2626"></i>Below target</span><span><i class="dot" style="background:#94a3b8"></i>Not reported / N/A</span></div></div>
+ <div class="pm-detail-scroll" id="pmDetailTable" role="region" aria-labelledby="pmDetailTitle"></div><p class="hint" id="pmDetailNote"></p></div></div>
+ <div class="panel pm-ring-panel"><div class="panelhead"><div><h2>PM Compliance | YTD 2026 by Machine</h2><p class="hint">Completed and pending preventive maintenance jobs</p></div><div class="pm-ring-legend"><span><i style="background:#00b050"></i>Done jobs</span><span><i style="background:#ff0000"></i>Pending jobs</span></div></div><div class="pm-ring-grid" id="pmYtdRings" aria-label="YTD 2026 machine-wise PM completion"></div><p class="pm-ring-note" id="pmRingNote"></p></div>
+</section>
+<section class="section" id="rm"><div class="grid cards" id="rmCards"></div><div class="panel" style="margin-bottom:16px"><div class="panelhead"><div><h2>Mechanical R&amp;M Cost (Rs. &rsquo;000) | Monthly &amp; Average Comparison</h2><p class="hint">Monthly actuals and YTD average compared with Avg Budget; gold line shows the monthly linear trend.</p></div></div><div class="chartbox" style="height:350px"><canvas id="rmCostChart" role="img" aria-label="R&amp;M monthly actual costs, average budget, YTD average and 2025 average in rupees thousands, with budget-based colours and a monthly trend line"></canvas></div><div class="legend" style="flex-wrap:wrap;justify-content:center;gap:8px 18px;margin-top:8px" aria-label="R&amp;M cost chart colour key"><span><i class="dot" style="background:linear-gradient(90deg,#005323,#06c75b,#007735)"></i>At or below budget</span><span><i class="dot" style="background:linear-gradient(90deg,#780000,#ff0808,#a90000)"></i>Above budget</span><span><i class="dot" style="background:linear-gradient(90deg,#06345e,#1267b4,#07427e)"></i>Avg Budget</span><span><i class="dot" style="background:linear-gradient(90deg,#24598c,#519ce7,#286db6)"></i>2025 Average*</span><span><i style="display:inline-block;width:16px;border-top:3px solid #b8860b;vertical-align:middle;margin-right:5px"></i>Linear trend</span></div><p class="hint" style="margin-top:8px">* The 2025 average represents actual costs, not budget. Values are shown in Rs. &rsquo;000, rounded to whole thousands; colours use unrounded costs. Grey indicates an unavailable comparison.</p></div><div class="panel" style="margin-bottom:16px"><div class="panelhead"><h2>R&M Cost per Kg vs Budget</h2></div><div class="chartbox" style="height:340px"><canvas id="rmKgChart" role="img" aria-label="Monthly actual and budget R&amp;M cost per kilogram, in rupees"></canvas></div></div></section>
+<section class="section" id="waste">
+ <div class="grid cards" id="wasteCards"></div>
+ <p class="source-note">Total Waste % is the sum of the four line percentages, not a production-weighted plant waste rate. Unreported periods are excluded.</p>
+ <div class="panel waste-panel"><div class="panelhead"><div><h2>Gross Wastage Performance</h2><p class="hint">2026 monthly actuals followed by YTD-26, Target-26 and 2025 actual</p></div></div>
+ <div class="class-perf-legend waste-legend" aria-label="Waste graph colours"><span><i style="background:#00B050"></i>At / below target</span><span><i style="background:#FF0000"></i>Above target</span><span><i style="background:#002060"></i>Target-26</span><span><i style="background:#DBEFF9"></i>2025 actual</span><span><i style="background:#94a3b8"></i>No target</span></div>
+ <div id="wasteGraphs" class="waste-graphs"></div></div>
+
+ </section>
+<section class="section" id="rav"><div class="panel rav-panel"><div class="panelhead rav-panelhead"><div><h2>Machine-wise RAV Performance</h2><p class="hint" id="ravPeriod">Monthly and YTD performance</p></div></div><div id="ravWarning" class="rav-warning" hidden></div><div class="rav-banner" id="ravTitle">U&amp;M RAV%</div><div id="ravTable" class="rav-scroll" role="region" aria-label="Machine-wise monthly and YTD RAV percentages"></div></div></section>
+
+<section class="section" id="classes"><div class="toolbar class-toolbar"><label for="classSelect">Machine class</label><select id="classSelect" onchange="renderClasses()"><option value="A">Class A</option><option value="B">Class B</option><option value="C">Class C</option></select><span class="current-period-label">Current month: <strong id="classCurrentMonth"></strong></span></div><div class="grid cards" id="classSummary"></div><div id="classMachineCards" class="class-machine-grid"></div><p class="source-note">Performance trends include reported 2026 months, YTD, Target-26 and 2025. Downtime details and RCA investigations are shown only for the current month when reported.</p></section>
+
+<section class="section" id="fi">
+ <div class="panel fi-panel"><div class="panelhead fi-panelhead"><div><h2>U&amp;M Financial Impact</h2><p class="fi-subtitle" id="fiPeriodNote">Rs. million</p></div><div class="fi-view"><label for="fiView">Table view</label><select id="fiView" onchange="renderFI()"><option value="visible">Standard report</option><option value="all">Include hidden rows and periods</option></select></div></div>
+ <div class="fi-legend"><span><i style="background:#C6EFCE;border-color:#006100"></i>Gain / favorable</span><span><i style="background:#FFC7CE;border-color:#9C0006"></i>Loss / unfavorable</span></div>
+ <div class="tablewrap fi-scroll" id="fiTable" tabindex="0" role="region" aria-label="Financial impact table"></div>
+ <p class="fi-foot" id="fiNote"></p>
+ </div>
+</section>
+<footer class="app-footer"><div class="app-footer-branding" tabindex="0" role="region" aria-label="Packages Group company logos"><img src="./group-brand-strip.png" alt="Packages Group and associated company logos" width="1191" height="76"></div><div class="app-footer-links"><span>Published reporting snapshot</span><a href="./privacy.html">Privacy policy</a><a href="./terms.html">Terms and conditions</a></div></footer></main></div>
+<script>
+let DATA=null,charts={};const $=id=>document.getElementById(id);const fmt=(v,d=2)=>v==null||!Number.isFinite(Number(v))?'-':Number(v).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});const pct=v=>v==null?'-':(Number(v)*100).toFixed(2)+'%';const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function cls(v,t,lower=true){if(v==null||t==null)return 'neutral';return (lower?(v<=t):(v>=t))?'good':'bad'}function status(v,t,lower=true){return v==null?'Not reported':t==null?'No target':(lower?(v<=t):(v>=t))?'On target':lower?'Above target':'Below target'}
+function table(headers,rows){return '<table class="responsive-table"><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map((x,i)=>'<td data-label="'+esc(headers[i]||'')+'"'+(/description|remarks|details|reason/i.test(headers[i]||'')?' data-wide="true"':'')+'>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
+function setMatrixMode(wrap,minWidth){wrap.classList.toggle('matrix-record-view',wrap.clientWidth<minWidth);}
+function reportWidth(){return REPORT_MODE?Math.floor(document.documentElement.clientWidth):Math.max(220,$(activeTab())?.clientWidth||document.documentElement.clientWidth-36);}
+function fitWidth(el,fallback=reportWidth()-48){return Math.max(210,el?.clientWidth||fallback);}
+function chunks(items,n){n=Math.max(1,Math.floor(n));let out=[];for(let i=0;i<items.length;i+=n)out.push(items.slice(i,i+n));return out;}
+function periodSpan(items,label=x=>x.label){return items.length===1?label(items[0]):label(items[0])+' to '+label(items.at(-1));}
+function band(title,html){return `<div class="report-band"><div class="report-band-heading">${esc(title)}</div>${html}</div>`;}
+function card(label,value,foot=''){return `<div class="card"><div class="label">${label}</div><div class="value">${value}</div><div class="foot">${foot}</div></div>`}
+function destroyCharts(){Object.values(charts).forEach(c=>c.destroy());charts={};}
+function chart(id,type,labels,datasets,opts={}){
+ if(REPORT_MODE&&(id==='rmCostChart'||id==='rmKgChart')){const canvas=$(id);if(canvas)reportRMChart(id,labels,datasets,canvas.closest('.chartbox'));return;}
+ for(const key of Object.keys(charts)){if(key===id||key.startsWith(id+'__')){charts[key].destroy();delete charts[key];}}
+ const ctx=$(id);if(!ctx)return;let box=ctx.closest('.chartbox');if(!box){box=document.createElement('div');box.className='chartbox';ctx.before(box);box.appendChild(ctx);}
+ const title=ctx.getAttribute('aria-label')||box.closest('.panel')?.querySelector('h2')?.textContent||id;
+ ctx.setAttribute('role','img');ctx.setAttribute('aria-label',title);
+ if(!box.parentElement.classList.contains('chart-scroll')){const w=document.createElement('div');w.className='chart-scroll';box.before(w);w.appendChild(box);}
+ const wrap=box.parentElement;wrap.querySelectorAll('.chart-part,.chart-fallback,.chart-band-title').forEach(x=>x.remove());box.hidden=false;ctx.hidden=false;wrap.hidden=false;
+ const width=fitWidth(wrap,reportWidth()-48),isPie=type==='doughnut'||type==='pie',height=box.dataset.reportHeight||String(Math.max(260,box.clientHeight||300));box.dataset.reportHeight=height;box.style.height=height+'px';box.classList.remove('dense-chart');
+ const dense=!isPie&&labels.length>6&&width/labels.length<56;if(dense)box.style.height=Math.max(Number(height),350)+'px';
+ const sets=labels.length?[labels.map((label,i)=>({label,i}))]:[];if(!sets.length){box.hidden=true;wrap.insertAdjacentHTML('beforeend','<div class="empty chart-fallback">No data reported.</div>');return;}
+ const vals=datasets.flatMap(d=>d.data).filter(Number.isFinite),stacked=opts.options?.scales?.y?.stacked,globalMax=stacked?Math.max(0,...labels.map((_,i)=>datasets.reduce((sum,d)=>sum+(Number.isFinite(d.data[i])?d.data[i]:0),0))):Math.max(0,...vals),globalMin=Math.min(0,...vals);
+ const slice=(d,g)=>{const next={...d,data:g.map(x=>d.data[x.i]??null)};for(const prop of ['backgroundColor','borderColor','borderWidth','pointBackgroundColor','pointBorderColor','pointRadius'])if(Array.isArray(d[prop]))next[prop]=g.map(x=>d[prop][x.i]);return next;};
+ sets.forEach((g,j)=>{const localLabels=g.map(x=>x.label),localDatasets=datasets.map(d=>slice(d,g));let canvas=ctx,container=box;
+  if(j>0){const part=document.createElement('div');part.className='chart-part';container=document.createElement('div');container.className='chartbox';container.style.height=height+'px';canvas=document.createElement('canvas');canvas.id=id+'__'+j;canvas.setAttribute('role','img');canvas.setAttribute('aria-label',title+' '+periodSpan(g));container.appendChild(canvas);part.appendChild(container);wrap.appendChild(part);}
+  if(sets.length>1){const heading=document.createElement('div');heading.className='chart-band-title';heading.textContent=periodSpan(g);container.before(heading);}
+  const showFallback=()=>{container.hidden=true;const f=document.createElement('div');f.className='chart-fallback';f.innerHTML='<p>Chart unavailable. Values are shown below.</p><div class="tablewrap">'+table(['Period / category',...localDatasets.map(d=>esc(d.label||'Value'))],localLabels.map((label,i)=>[esc(label),...localDatasets.map(d=>d.data[i]==null?'Not reported':fmt(d.data[i],2)+(opts.percent?'%':''))]))+'</div>';container.after(f);};
+  if(typeof Chart==='undefined'){showFallback();return;}
+  const base={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{position:'bottom',labels:{boxWidth:11,font:{size:12}}}},scales:isPie?{}:{x:{grid:{display:false},ticks:{font:{size:11},autoSkip:false,maxRotation:50}},y:{beginAtZero:true,grid:{color:'#e5ebf0'},ticks:{font:{size:11},callback:v=>opts.percent?v+'%':v}}}};
+  const options={...base,...opts.options,animation:false};if(!isPie){options.scales={...base.scales,...opts.options?.scales};options.scales.x={...base.scales.x,...options.scales.x,ticks:{...base.scales.x.ticks,...options.scales.x?.ticks,autoSkip:false,...(dense?{minRotation:width<450?85:45,maxRotation:90,font:{size:width<450?9:10}}:{})}};options.scales.y={...base.scales.y,...options.scales.y};if(sets.length>1){options.scales.y.suggestedMax=Math.max(options.scales.y.suggestedMax||0,globalMax*1.12);options.scales.y.suggestedMin=globalMin;}}
+  // Each plugin receives the original data offset for correct budget colours and separators.
+  const offsetPlugin={id:'reportBandOffset',beforeInit(c){c.$reportOffset=g[0].i;}};
+  try{charts[j?id+'__'+j:id]=new Chart(canvas,{type,data:{labels:localLabels,datasets:localDatasets},options,plugins:[offsetPlugin,...(opts.plugins||[])]});}catch(e){console.error('Chart render failed',id,e);showFallback();}
+ });
+}
+function selectedMonth(){return DATA?.latestReliability||DATA?.months?.at(-1)||null;}
+function setOptions(id,items,defaultValue){const el=$(id),previous=el.value;const markup=items.map(([v,t])=>`<option value="${esc(v)}">${esc(t)}</option>`).join('');if(el.innerHTML!==markup)el.innerHTML=markup;el.value=items.some(([v])=>v===previous)?previous:defaultValue;}
+function init(){if(!DATA)return;const ms=DATA.months||[],opts=[['latest','Latest reported'+(selectedMonth()?' ('+selectedMonth()+')':'')],...ms.map(m=>[m,m])];setOptions('relMonth',opts,'latest');setOptions('machineFilter',[['all','All machines'],...DATA.machines.map(m=>[m.machine,m.machine])],'all');renderActive();}
+function periodMonth(id){const v=$(id).value;return v==='latest'||!v?selectedMonth():v;}
+function activeTab(){return document.querySelector('#nav button.active')?.dataset.tab||'overview';}
+const renderers={overview:()=>renderOverview(),reliability:()=>renderReliability(),pm:()=>renderPM(),rm:()=>renderRM(),waste:()=>renderWaste(),rav:()=>renderRAV(),classes:()=>renderClasses(),fi:()=>renderFI()};
+function renderActive(){if(!DATA)return;lastReportWidth=$(activeTab()).clientWidth;destroyCharts();renderers[activeTab()]();}
+function renderOverview(){
+ const score=DATA.kpiScorecard,wrap=$('kpiScorecard');if(!score?.rows?.length){wrap.innerHTML='<div class="empty">No KPI scorecard data available.</div>';return;}
+ const {months,rows}=score;$('kpiScorePeriod').textContent=months.length?months[0]+' to '+months.at(-1):'2026';
+ const labels=['US','PM','FM','EX','FE','2025','Target 2026','YTD rating','Actual YTD 2026',...months];
+ const valid=c=>/^#[0-9A-F]{6}$/i.test(c||'');
+ const cellHTML=(r,i)=>{const c=r.cells[i]||{},v=c.value,label=v==null?'&ndash;':typeof v==='number'?(c.dashZero&&v===0?'-':r.unit==='number'?fmt(v,2):pct(v)):esc(v),css=(valid(c.style?.background)?'background-color:'+c.style.background+';':'')+(valid(c.style?.color)?'color:'+c.style.color+';':'');return `<td data-label="${esc(labels[i])}" data-kpi-cell="${esc(r.id)}:${i}" class="${css?'kpi-status-cell':''} ${i<5?'kpi-threshold':''} ${i===6?'kpi-target-neutral':''} ${i===7?'kpi-rating-cell':''} ${i===8?'matrix-ytd':''} ${v==null?'kpi-blank':''}"${css?' style="'+css+'"':''}>${label}</td>`;};
+ const body=rows.map((r,i)=>`<tr class="${Number.isInteger(r.id)?'kpi-parent':'kpi-subgoal'}${i>0&&rows[i-1].group!==r.group?' matrix-group-start':''}"><th scope="row" class="matrix-goal"><span class="kpi-num">${esc(r.id)}</span>${esc(r.name)}</th>${labels.map((_,j)=>cellHTML(r,j)).join('')}</tr>`).join('');
+ wrap.classList.add('unified-matrix-wrap');wrap.innerHTML=`<table class="kpi-report-table unified-matrix kpi-unified" aria-label="U&amp;M KPI performance scorecard"><colgroup><col style="width:14%">${labels.map(()=>'<col>').join('')}</colgroup><thead><tr><th scope="col" rowspan="2">Performance goal</th><th scope="colgroup" colspan="5" class="matrix-criteria-head">Rating criteria</th>${labels.slice(5).map((x,i)=>`<th scope="col" rowspan="2" class="${i===2||i===3?'matrix-ytd-head':''}">${esc(x)}</th>`).join('')}</tr><tr>${labels.slice(0,5).map(x=>`<th scope="col" class="matrix-criteria-head">${esc(x)}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table>`;
+ // PDF-style matrix on desktop and landscape tablets, readable records on phones.
+ const minimumMatrixWidth=Math.max(900,Math.ceil(labels.length*38.5/.86));
+ wrap.classList.toggle('matrix-record-view',!REPORT_MODE&&wrap.clientWidth<minimumMatrixWidth);
+}
+// Native SVG charts keep every selected machine in a single plot; no split or overflow.
+function reliabilityChart(id,rows,metric){
+ const el=$(id),isDT=metric==='dt',isBF=metric==='mtbf',name=isDT?'DT%':isBF?'MTBF':'MTTR';
+ const data=rows.map(x=>{const q=x.cur,noRun=notOperated(q),v=noRun?null:isBF?mtbfDisplay(q):q[metric],t=x.targets?.[metric];return {machine:x.machine,value:Number.isFinite(v)?v*(isDT?100:1):null,target:Number.isFinite(t)?t*(isDT?100:1):null,notOperated:noRun,zero:isBF&&mtbfZeroDowntime(q),color:isBF&&mtbfZeroDowntime(q)?'#00B050':colorFor(v,t,!isBF)};});
+ if(!data.length){el.innerHTML='<div class="empty">No machines for this selection.</div>';return;}
+ const W=Math.max(220,Math.floor(el.clientWidth||reportWidth()-48)),mobile=W<620,actual=v=>v==null?'N/A':fmt(v,isBF?1:2)+(isDT?'%':''),maxRaw=Math.max(0,...data.flatMap(x=>[x.value??0,x.target??0])),upper=maxRaw>0?maxRaw*1.20:1;
+ const labelColor='#203e54',axisColor='#52687a',targetColor='#002060';
+ const legend=`<div class="rel-legend"><span><i style="background:#168344"></i>On / better than target</span><span><i style="background:#c62828"></i>Missed target</span><span><i style="background:#a3afba"></i>No target</span><span><i class="rel-target-key"></i>Target</span>${isBF?'<span>Zero DT: available hours shown in green</span>':''}${data.some(d=>d.notOperated)?'<span>No run = Not Operated (0 available hours)</span>':''}</div>`;
+ const description=data.map(d=>`${d.machine}: actual ${d.notOperated?'Not Operated':actual(d.value)}, target ${actual(d.target)}${d.zero?', zero downtime with operating hours':''}`).join('; ');
+ let svg='';
+ if(mobile){
+  // On narrow phones retain one continuous machine sequence, with readable horizontal bars.
+  const L=Math.min(100,Math.max(67,W*.29)),right=W-6,actualX=right-47,targetX=right-2,R=actualX-37,T=26,rowH=27,H=T+rowH*data.length+16,scale=v=>L+v/upper*Math.max(10,R-L);
+  svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(name+' by machine. '+description)}"><title>${esc(name+' by machine')}</title><text x="${L}" y="13" font-size="10" fill="${axisColor}">${name}${isDT?'':' (hrs)'}</text><text x="${actualX}" y="13" font-size="10" text-anchor="end" fill="${axisColor}">Actual</text><text x="${targetX}" y="13" font-size="10" text-anchor="end" fill="${targetColor}">Target</text>`;
+  data.forEach((d,i)=>{const cy=T+i*rowH+rowH/2;
+   svg+=`<g data-machine="${esc(d.machine)}"><title>${esc(d.machine+': Actual '+(d.notOperated?'Not Operated':actual(d.value))+' | Target '+actual(d.target)+(d.zero?' | Zero downtime':''))}</title><line x1="0" x2="${right}" y1="${cy+rowH/2}" y2="${cy+rowH/2}" stroke="#e3eaf0"/><text x="2" y="${cy+3.5}" font-size="10.5" font-weight="600" fill="${labelColor}">${esc(d.machine)}</text><rect x="${L}" y="${cy-5}" width="${Math.max(10,R-L)}" height="10" fill="#f0f4f7"/>`;
+   if(d.value!==null)svg+=`<rect data-actual="${d.value}" x="${L}" y="${cy-5}" width="${Math.max(1,scale(d.value)-L)}" height="10" fill="${d.color}"/>`;
+   if(d.target!==null)svg+=`<line x1="${scale(d.target)}" x2="${scale(d.target)}" y1="${cy-8}" y2="${cy+8}" stroke="${targetColor}" stroke-width="1.7"/>`;
+   svg+=`<text x="${actualX}" y="${cy+3.5}" font-size="10" text-anchor="end" font-weight="600" fill="${d.value===null?axisColor:d.color}">${esc(d.notOperated?'No run':actual(d.value))}</text><text x="${targetX}" y="${cy+3.5}" font-size="10" text-anchor="end" fill="${targetColor}">${esc(actual(d.target))}</text></g>`;
+  });
+ }else{
+  const L=54,R=W-12,T=26,B=234,H=326,step=(R-L)/data.length,barW=Math.min(24,step*.55),y=v=>B-v/upper*(B-T),x=i=>L+(i+.5)*step,small=step<35;
+  svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(name+' by machine. '+description)}"><title>${esc(name+' by machine')}</title><text x="${L}" y="12" font-size="11" fill="${axisColor}">${isDT?'%':'Hours'}</text>`;
+  for(let i=0;i<=4;i++){let v=upper*i/4,yy=y(v);svg+=`<line x1="${L}" x2="${R}" y1="${yy}" y2="${yy}" stroke="#e1e8ee"/><text x="${L-6}" y="${yy+3}" text-anchor="end" fill="${axisColor}" font-size="10">${fmt(v,isDT||!isBF?1:0)}${isDT?'%':''}</text>`;}
+  data.forEach((d,i)=>{const xx=x(i),yy=d.value===null?B:y(d.value);svg+=`<g data-machine="${esc(d.machine)}"><title>${esc(d.machine+': Actual '+(d.notOperated?'Not Operated':actual(d.value))+' | Target '+actual(d.target)+(d.zero?' | Zero downtime':''))}</title>`;
+   if(d.value!==null)svg+=`<rect data-actual="${d.value}" x="${xx-barW/2}" y="${Math.min(B-1,yy)}" width="${barW}" height="${Math.max(1,B-yy)}" fill="${d.color}"/>`;
+   if(d.target!==null){const ty=y(d.target),tw=Math.min(17,step*.68);svg+=`<line data-target="${d.target}" x1="${xx-tw/2}" x2="${xx+tw/2}" y1="${ty}" y2="${ty}" stroke="${targetColor}" stroke-width="2.5" stroke-linecap="round"><title>${esc(d.machine+' target: '+actual(d.target))}</title></line>`;}
+   let labelY=yy-5;if(d.target!==null&&Math.abs(y(d.target)-labelY)<9)labelY=Math.min(labelY,y(d.target)-9);
+   svg+=d.notOperated?`<text x="${xx}" y="${B-19}" text-anchor="middle" font-size="${small?7.5:8.5}" fill="#64748b" data-operation-state="not-operated" stroke="white" stroke-width="2" paint-order="stroke" aria-label="Not Operated"><tspan x="${xx}">Not</tspan><tspan x="${xx}" dy="10">Operated</tspan></text>`:`<text x="${xx}" y="${Math.max(12,labelY)}" text-anchor="middle" font-size="${d.value===null?9:small?8:10}" font-weight="${d.value===null?400:600}" fill="${d.value===null?'#6a7d8e':labelColor}" stroke="white" stroke-width="2.4" paint-order="stroke">${esc(actual(d.value))}</text>`;
+   svg+=`<text transform="translate(${xx+3} ${B+12}) rotate(-63)" text-anchor="end" font-size="${small?9:10.5}" fill="${labelColor}">${esc(d.machine)}</text></g>`;
+  });
+
+ }
+ el.innerHTML=svg+'</svg>'+legend;
+}
+function renderReliability(){
+ if(!DATA)return;const m=periodMonth('relMonth'),f=$('machineFilter').value,d=DATA.machines.filter(x=>f==='all'||x.machine===f).map(x=>({...x,cur:x.monthly.find(z=>z.month===m)||{}}));
+ $('relCards').innerHTML=[card('Machine Count',d.length,'Selected filter'),card('Total DT Hours',fmt(d.some(x=>x.cur.dtHours!=null)?d.reduce((a,x)=>a+(x.cur.dtHours||0),0):null),'Selected month'),card('Average MTTR',fmt(avg(d.map(x=>x.cur.mttr)))+' hrs','Selected month'),card('Average MTBF',fmt(avg(d.map(x=>mtbfDisplay(x.cur))))+' hrs','Available hours substituted when DT = 0')].join('');
+ reliabilityChart('relDtChart',d,'dt');reliabilityChart('relMttrChart',d,'mttr');reliabilityChart('relMtbfChart',d,'mtbf');
+}
+function colorFor(v,t,lower=true){return v==null||t==null?'#a3afba':(lower?v<=t:v>=t)?'#168344':'#c62828';}
+function avg(a){let v=a.filter(x=>x!=null&&Number.isFinite(x));return v.length?v.reduce((x,y)=>x+y,0)/v.length:null}
+function renderPMDetail(pm,month){
+ if(!pm)return;
+ const target=pm.target,monthly=pm.monthly.find(m=>m.month===month)||{};
+ const groups=[{key:month,label:month,total:monthly},{key:'ytd',label:'YTD-26',total:pm.ytd},{key:'prior',label:'FY 2025',total:pm.prior}];
+ const fields=[['planned','Planned'],['executed','Executed'],['compliance','Compliance %']];
+ const record=(m,g)=>g.key==='ytd'?m.ytd:g.key==='prior'?m.prior:m.months.find(q=>q.month===g.key)||{};
+ const periodCell=(q,g)=>{q=q||{};return `<td class="pm-compare-period" data-period="${esc(g.key)}"><div class="pm-compare-values">${fields.map(([key,label])=>{const value=q[key],missing=value==null,compliance=key==='compliance',shown=missing?(q.explicitNA?.[key]||(compliance&&(q.sourceNA||q.reported&&q.planned===0))?'N/A':'-'):(compliance?pct(value):fmt(value,0));const state=compliance?(missing?'pm-na':target==null?'':value>=target?'pm-good':'pm-bad'):(missing?'pm-na':'');return `<span class="pm-compare-value ${state}" data-field="${key}"><small>${label}</small><b>${esc(shown)}</b></span>`;}).join('')}</div></td>`;};
+ const heading=groups.map(g=>`<th scope="col" class="pm-compare-heading ${g.key==='ytd'?'pm-compare-ytd':''}"><span>${esc(g.label)}</span><div class="pm-compare-subheads" aria-hidden="true">${fields.map(([,label])=>`<span>${label}</span>`).join('')}</div></th>`).join('');
+ const row=(m,total=false)=>`<tr class="${total?'pm-compare-total':''}"><th scope="row" class="pm-compare-machine">${esc(total?'Total':m.machine)}</th>${groups.map(g=>periodCell(total?g.total:record(m,g),g)).join('')}</tr>`;
+ const wrap=$('pmDetailTable');wrap.classList.remove('matrix-record-view','unified-matrix-wrap');
+ wrap.innerHTML=`<table class="pm-compare-table" aria-label="Selected month, year-to-date and 2025 preventive maintenance comparison"><colgroup><col class="pm-compare-machine-col"><col><col><col></colgroup><thead><tr><th scope="col">Machine</th>${heading}</tr></thead><tbody>${pm.machines.map(m=>row(m)).join('')}${row({},true)}</tbody></table>`;
+ $('pmTargetLabel').textContent=target==null?'Target unavailable':'Target '+pct(target);
+ const count=monthly.reportedMachines||0,total=pm.machines.length;
+ $('pmDetailNote').textContent=(count===0?month+': PM data not reported.':month+': '+count+' of '+total+' machines reported.')+' YTD-26 includes all reported 2026 months. A dash means not reported.'+(monthly.incompleteMachines?' '+monthly.incompleteMachines+' incomplete or invalid machine records are excluded.':'');
+}
+function renderPMYtdRings(pm){
+ if(!pm)return;
+ const items=pm.machines||[], ringEl=$('pmYtdRings');
+ // Use unrounded counts for the ring segments; display one decimal to avoid rounding pending jobs to 100%.
+ const markup=items.map(m=>{
+  const q=m.ytd||{},p=q.planned,e=q.executed;
+  const valid=q.reported&&Number.isFinite(p)&&Number.isFinite(e)&&p>0&&e>=0&&e<=p;
+  const pending=valid?p-e:null,donePct=valid?100*e/p:null;
+  const center=valid?(donePct===100?'100%':donePct===0?'0%':donePct>=99.95||donePct<0.05?donePct.toFixed(2)+'%':donePct.toFixed(1)+'%'):'N/A';
+  const detail=valid?`${m.machine}: ${pct(e/p)} done, ${pct(pending/p)} pending; ${e} of ${p} planned jobs executed.`:`${m.machine}: YTD planned and executed job counts are unavailable or invalid.`;
+  // SVG pathLength normalizes the circumference to 100. Start at 12 o'clock and draw clockwise.
+  // Red background + green completion arc gives exactly the pending remainder, with no visible gaps.
+  const green=valid&&donePct>0?(donePct>=100?'<circle cx="80" cy="80" r="65" fill="none" stroke="#00b050" stroke-width="20"/>':`<circle cx="80" cy="80" r="65" fill="none" stroke="#00b050" stroke-width="20" pathLength="100" stroke-dasharray="${donePct} ${100-donePct}" transform="rotate(-90 80 80)"/>`):'';
+  return `<figure class="pm-ring-item"><figcaption class="pm-ring-name">${esc(m.machine)}</figcaption><svg class="pm-ring-svg" viewBox="0 0 160 160" role="img" aria-label="${esc(detail)}"><title>${esc(detail)}</title><circle cx="80" cy="80" r="65" fill="none" stroke="${valid?'#ff0000':'#dce3eb'}" stroke-width="20"/>${green}<text class="pm-ring-center" x="80" y="80" dominant-baseline="central" text-anchor="middle">${center}</text></svg><div class="pm-ring-counts"><span>Planned<b>${fmt(q.planned,0)}</b></span><span class="pm-done">Done<b>${fmt(q.executed,0)}</b></span><span class="pm-pending">Pending<b>${fmt(pending,0)}</b></span></div></figure>`;
+ }).join('');
+ if(ringEl.innerHTML!==markup)ringEl.innerHTML=markup;
+ const months26=pm.monthly.filter(x=>x.month.endsWith('-26')),latest=months26.filter(x=>x.reportedMachines>0).slice(-1)[0];
+ $('pmRingNote').textContent='YTD includes all reported 2026 job counts.'+(latest?' Latest reported month: '+latest.month+(latest.reportedMachines<latest.totalMachines?' ('+latest.reportedMachines+'/'+latest.totalMachines+' machines reported)':'')+'.':'')+(pm.ytdMismatch?' YTD is calculated from the reported monthly counts.':'');
+}
+function renderPM(){
+ const pm=DATA?.pm;if(!pm)return;
+ const period=$('pmPeriod'),previous=period.value||'current';
+ // Follow the Pakistan calendar month by default; do not substitute an older month when it is blank.
+ const current=DATA.currentMonth?.label||new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Karachi',month:'short',year:'2-digit'}).format(new Date()).replace(' ','-');
+ const choices=[['current','Current month ('+current+')'],...pm.monthly.slice().reverse().map(m=>[m.month,m.month+(m.reportedMachines===0?' (not reported)':m.reportedMachines<m.totalMachines?' (partial)':'')])];
+ const markup=choices.map(([v,label])=>`<option value="${esc(v)}">${esc(label)}</option>`).join('');
+ if(period.innerHTML!==markup)period.innerHTML=markup;
+ period.value=choices.some(([v])=>v===previous)?previous:'current';
+ const month=period.value==='current'?current:period.value,total=pm.monthly.find(m=>m.month===month)||{},target=pm.target;
+ const coverage=total.reportedMachines||0,number=pm.machines.length;
+ $('pmSelectionNote').textContent=coverage?coverage+' / '+number+' machines reported':'No PM data reported for '+month;
+ const color=total.compliance==null||target==null?'#52647a':total.compliance>=target?'#168344':'#c62828';
+ $('pmCards').innerHTML=[card('Planned Activities',fmt(total.planned,0),esc(month)),card('Executed Activities',fmt(total.executed,0),esc(month)),card('Pending Activities',fmt(total.pending,0),esc(month)),card('PM Compliance',`<span style="color:${color}">${pct(total.compliance)}</span>`,target==null?'Target unavailable':'Target: '+pct(target))].join('');
+ renderPMDetail(pm,month);
+ renderPMYtdRings(pm);
+}
+function renderRM(){
+ let cur=DATA.rm.months.filter(x=>x.month.endsWith('-26')&&(x.actual!=null||x.rsKg!=null));
+ let avgkg=avg(cur.map(x=>x.rsKg)),actuals=cur.filter(x=>x.actual!=null),sum=actuals.length?actuals.reduce((s,x)=>s+x.actual,0):null;
+ let proposed=DATA.rm.summary.proposedBudget;
+ $('rmCards').innerHTML=[card('YTD Actual Cost',sum==null?'-':fmt(sum/1000)+' M','Rs. million'),card('YTD Average Rs/Kg',fmt(avgkg),'Compared with average budget'),card('Average Budget Rs/Kg',fmt(avg(cur.map(x=>x.budget))),'Average budget'),card('Proposed Budget',proposed==null?'-':fmt(proposed/1000)+' M','Rs. million')].join('');
+ // Compare monthly absolute costs and annual averages.
+ // Costs in the source are already Rs. '000. Compare unrounded values with the
+ // same average budget for every monthly bar and the YTD average bar.
+ const costBudget=DATA.rm.summary.avgBudgetCost;
+ // Glossy, beveled colours based on the reference management chart.
+ const costPalette={
+  '#e00000':{edge:'#780000',dark:'#a90000',body:'#ff0808',light:'#ff8888',shade:'#870000'},
+  '#008f3b':{edge:'#005323',dark:'#007735',body:'#06c75b',light:'#7be6a1',shade:'#00642c'},
+  '#084d91':{edge:'#06345e',dark:'#07427e',body:'#1267b4',light:'#8bbde7',shade:'#063963'},
+  '#438ed7':{edge:'#24598c',dark:'#286db6',body:'#519ce7',light:'#badfff',shade:'#245d97'},
+  '#cbd5e1':{edge:'#8190a4',dark:'#9aa9bc',body:'#d5dfeb',light:'#ffffff',shade:'#8797ab'}
+ };
+ const budgetColor=value=>!Number.isFinite(value)||!Number.isFinite(costBudget)?'#cbd5e1':value>costBudget?'#e00000':'#008f3b';
+ const rmCostBars=[
+  ...actuals.map(x=>({label:x.month,value:x.actual,color:budgetColor(x.actual)})),
+  {label:'Avg Budget',value:costBudget,color:'#084d91'},
+  {label:'Avg YTD-26',value:DATA.rm.summary.avgYTD,color:budgetColor(DATA.rm.summary.avgYTD)},
+  {label:'2025 Budget Avg*',value:DATA.rm.summary.avg2025Cost,color:'#438ed7'}
+ ];
+ // Ordinary least-squares linear trend over displayed monthly actuals only.
+ // Summary bars are not observations and must not extend or distort the trend.
+ const count=actuals.length;
+ let trend=Array(rmCostBars.length).fill(null);
+ if(count>=2){
+  const xMean=(count-1)/2,yMean=avg(actuals.map(x=>x.actual));
+  let covariance=0,variance=0;
+  actuals.forEach((x,i)=>{covariance+=(i-xMean)*(x.actual-yMean);variance+=(i-xMean)**2;});
+  const slope=covariance/variance,intercept=yMean-slope*xMean;
+  trend=trend.map((_,i)=>i<count?intercept+slope*i:null);
+ }
+ chart('rmCostChart','bar',rmCostBars.map(x=>x.label),[
+  {label:"R&M cost (Rs. '000)",data:rmCostBars.map(x=>x.value),backgroundColor:rmCostBars.map(x=>x.color),borderColor:rmCostBars.map(x=>costPalette[x.color].edge),borderWidth:1,borderRadius:0,maxBarThickness:54,order:1},
+  {label:'Monthly linear trend',type:'line',data:trend,borderColor:'#b8860b',backgroundColor:'#b8860b',borderWidth:3,pointRadius:0,pointHoverRadius:3,fill:false,tension:0,spanGaps:false,order:0}
+ ],{options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+": Rs. "+fmt(c.raw,0)+" ('000)"}}},layout:{padding:{top:22}},scales:{x:{grid:{display:false},ticks:{autoSkip:false,maxRotation:50,minRotation:35,font:{size:10}}},y:{beginAtZero:true,grid:{color:'#eef1f6'},ticks:{font:{size:10},callback:v=>fmt(v,0)},grace:'12%'}}},plugins:[{id:'rmCostGloss',afterDatasetDraw(c,args){
+  // Overlay real Chart.js bar bounds, so the gloss follows redraws, animation,
+  // automatic workbook refresh, resizing and changing budget status.
+  if(args.index!==0)return;
+  const {ctx,chartArea}=c;
+  ctx.save();ctx.beginPath();ctx.rect(chartArea.left,chartArea.top,chartArea.right-chartArea.left,chartArea.bottom-chartArea.top);ctx.clip();
+  c.getDatasetMeta(0).data.forEach((bar,i)=>{
+   if(!Number.isFinite(rmCostBars[i+(c.$reportOffset||0)]?.value))return;
+   const {x,y,base,width}=bar.getProps(['x','y','base','width'],false);
+   const left=x-width/2,right=x+width/2,top=Math.min(y,base),bottom=Math.max(y,base),h=bottom-top;
+   if(![left,right,top,bottom,width].every(Number.isFinite)||width<2||h<1)return;
+   const p=costPalette[rmCostBars[i+(c.$reportOffset||0)].color];
+   // A saturated centre and shaded edges reproduce the Excel-style bevel.
+   const body=ctx.createLinearGradient(left,0,right,0);
+   body.addColorStop(0,p.edge);body.addColorStop(.09,p.dark);body.addColorStop(.26,p.body);body.addColorStop(.63,p.body);body.addColorStop(.87,p.dark);body.addColorStop(1,p.edge);
+   ctx.save();ctx.shadowColor='rgba(0,0,0,.24)';ctx.shadowBlur=4;ctx.shadowOffsetX=2;ctx.shadowOffsetY=1;ctx.fillStyle=body;ctx.fillRect(left,top,width,h);ctx.restore();
+   ctx.fillStyle=body;ctx.fillRect(left,top,width,h);
+   const depth=Math.min(7,width*.22,h*.38);
+   if(depth>=1){
+    const sheen=ctx.createLinearGradient(0,top,0,top+depth);
+    sheen.addColorStop(0,p.light);sheen.addColorStop(.38,p.body);sheen.addColorStop(1,p.dark);
+    ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(right,top);ctx.lineTo(right-depth,top+depth);ctx.lineTo(left+depth,top+depth);ctx.closePath();ctx.fillStyle=sheen;ctx.fill();
+    ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(left+depth,top+depth);ctx.lineTo(left+depth,bottom);ctx.lineTo(left,bottom);ctx.closePath();ctx.fillStyle='rgba(255,255,255,.10)';ctx.fill();
+    ctx.beginPath();ctx.moveTo(right,top);ctx.lineTo(right-depth,top+depth);ctx.lineTo(right-depth,bottom);ctx.lineTo(right,bottom);ctx.closePath();ctx.fillStyle='rgba(0,0,0,.15)';ctx.fill();
+   }
+   ctx.strokeStyle=p.edge;ctx.lineWidth=1;ctx.strokeRect(left+.5,top+.5,Math.max(0,width-1),Math.max(0,h-1));
+  });
+  ctx.restore();
+ }},{id:'rmCostDivider',beforeDatasetsDraw(c){
+  // Separate monthly actuals from the three average bars as in the reference.
+  const at=count-(c.$reportOffset||0);if(at<=0||at>=c.data.labels.length)return;
+  const scale=c.scales.x,x=(scale.getPixelForValue(at-1)+scale.getPixelForValue(at))/2;
+  if(!Number.isFinite(x))return;
+  const {ctx,chartArea}=c;ctx.save();ctx.beginPath();ctx.setLineDash([7,5]);ctx.strokeStyle='#e00000';ctx.lineWidth=2;ctx.moveTo(x,chartArea.top);ctx.lineTo(x,chartArea.bottom);ctx.stroke();ctx.restore();
+ }},{id:'rmCostLabels',afterDatasetsDraw(c){
+  const {ctx}=c;ctx.save();ctx.font='600 10px Inter, Segoe UI, Arial, sans-serif';ctx.fillStyle='#17243a';ctx.strokeStyle='#ffffff';ctx.lineWidth=3;ctx.lineJoin='round';ctx.textAlign='center';ctx.textBaseline='bottom';
+  c.getDatasetMeta(0).data.forEach((bar,i)=>{const v=c.data.datasets[0].data[i];if(Number.isFinite(v)){const label=fmt(v,0);ctx.strokeText(label,bar.x,bar.y-5);ctx.fillText(label,bar.x,bar.y-5);}});ctx.restore();
+ }}]});
+ chart('rmKgChart','line',cur.map(x=>x.month),[
+  {label:'Actual Rs/Kg',data:cur.map(x=>x.rsKg),borderColor:'#0ea5a4',backgroundColor:'#0ea5a4',pointRadius:4,pointHoverRadius:5,tension:.25,spanGaps:false},
+  {label:'Budget Rs/Kg',data:cur.map(x=>x.budget),borderColor:'#e05252',backgroundColor:'#e05252',borderDash:[5,4],pointRadius:0,tension:0,spanGaps:false}
+ ],{options:{layout:{padding:{top:24,left:9,right:14}},scales:{x:{grid:{display:false},ticks:{font:{size:11},autoSkip:false,maxRotation:45}},y:{beginAtZero:true,grace:'12%',grid:{color:'#e5ebf0'},ticks:{font:{size:11},callback:v=>fmt(v,1)}}},plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:12}}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.raw,2)}}}},plugins:[{
+  id:'rmKgValueLabels',afterDatasetsDraw(c){
+   const {ctx,chartArea}=c;
+   const actual=c.data.datasets[0].data,budget=c.data.datasets[1].data;
+   const actualMeta=c.getDatasetMeta(0),budgetMeta=c.getDatasetMeta(1);
+   ctx.save();ctx.font='600 12px Segoe UI, Arial, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineJoin='round';ctx.strokeStyle='#ffffff';ctx.lineWidth=3;
+   const draw=(p,label,y,color)=>{
+    if(!p||p.skip||!Number.isFinite(p.x)||!Number.isFinite(y))return;
+    const half=ctx.measureText(label).width/2+2;
+    const x=Math.max(half,Math.min(c.width-half,p.x));
+    ctx.fillStyle=color;ctx.strokeText(label,x,y);ctx.fillText(label,x,y);
+   };
+   if(c.isDatasetVisible(0))actualMeta.data.forEach((p,i)=>{
+    if(!Number.isFinite(actual[i])||!p||p.skip||!Number.isFinite(p.y))return;
+    const y=Math.max(9,p.y-14);
+    draw(p,fmt(actual[i],2),y,'#12444d');
+   });
+   if(c.isDatasetVisible(1)){
+    const indices=budget.map((v,i)=>Number.isFinite(v)?i:-1).filter(i=>i>=0);
+    const flat=indices.length>0&&indices.every(i=>budget[i]===budget[indices[0]]);
+    // One label on a constant budget line, or each actual budget point when it varies.
+    const chosen=flat?[indices[Math.floor(indices.length/2)]]:indices;
+    chosen.forEach(i=>{
+     const p=budgetMeta.data[i];if(!p||p.skip||!Number.isFinite(p.y))return;
+     const label=flat?'Budget '+fmt(budget[i],2):fmt(budget[i],2);
+     const a=actualMeta.data[i],actualLabelY=a&&Number.isFinite(actual[i])?a.y-14:null;
+     let y=p.y+15;
+     if(c.isDatasetVisible(0)&&actualLabelY!=null&&Math.abs(y-actualLabelY)<14)y=p.y-18;
+     if(y>chartArea.bottom-3)y=p.y-15;
+     if(c.isDatasetVisible(0)&&actualLabelY!=null&&Math.abs(y-actualLabelY)<14)y=actualLabelY-17;
+     draw(p,label,Math.max(9,y),'#b91c1c');
+    });
+   }
+   ctx.restore();
+  }
+ }]});
+}
+function renderWaste(){
+ const rows=DATA.waste?.performance||[],months=DATA.waste?.months||[],latest=months.at(-1)||null,total=rows.find(r=>r.total),active=rows.filter(r=>r.monthly.some(m=>m.waste!=null)||r.ytd.waste!=null||r.baseline.waste!=null);
+ const actual=total?.ytd.waste??null,target=total?.targets.waste??null;
+ const colored=(value,goal)=>`<span class="${cls(value,goal)}">${value==null?'Not reported':pct(value)}</span>`;
+ $('wasteCards').innerHTML=[card('Waste Reporting Month',esc(latest||'Not reported'),'Latest reported period'),card('Total Waste YTD',colored(actual,target),'Total waste KPI'),card('Total Waste Target',target==null?'Not reported':pct(target),'2026 KPI target'),card('Total Waste YTD Rating',esc(total?.rating||'Not reported'),'YTD performance rating')].join('');
+ $('wasteGraphs').innerHTML=active.length?active.map((r,i)=>`<article class="class-perf-chart ${r.total?'waste-total':''}" data-waste-machine="${esc(r.machine)}"><header><div><h5>${esc(r.total?r.machine:r.machine+' | Gross Waste %')}</h5><div class="waste-subtitle">YTD: ${colored(r.ytd.waste,r.targets.waste)} | Target: ${pct(r.targets.waste)} | 2025: ${pct(r.baseline.waste)}</div></div>${r.rating?`<div class="class-rating ${cls(r.ytd.waste,r.targets.waste)}"><small>YTD rating</small>${esc(r.rating)}</div>`:''}</header><div class="class-plot" id="wastePlot${i}" tabindex="0" role="region" aria-label="${esc(r.machine)} wastage chart">${classTrendSVG(r,'waste')}</div><div class="class-swipe-hint"></div><p>${r.total?'Sum of line waste percentages. ':''}Colours compare unrounded actuals against the 2026 target.</p></article>`).join(''):'<div class="empty">No reported wastage data available.</div>';
+}
+function renderRAV(){
+ const report=DATA.ravReport,wrap=$('ravTable'),warning=$('ravWarning');
+ const percentage=v=>{if(v===null||!Number.isFinite(v))return '';const rounded=(v*100).toFixed(2);return (rounded==='-0.00'?'0.00':rounded)+'%';};
+ warning.hidden=true;warning.textContent='';wrap.classList.remove('matrix-record-view');
+ if(!report||report.error){wrap.innerHTML='<div class="empty">RAV report not available.</div>';$('ravPeriod').textContent='No data available';return;}
+ const months=report.months||[],rows=report.rows||[],cols=[...months.map((label,i)=>({label,i,short:label.slice(0,3)})),{label:'YTD RAV%',i:-1,short:'YTD'}];
+ const colWidth=86/cols.length;
+ wrap.classList.add('unified-matrix-wrap');
+ const width=wrap.clientWidth||reportWidth()-32,available=width*.86/cols.length-2,longest=Math.max(4,...rows.flatMap(r=>[...r.values,r.ytd].map(v=>percentage(v).replace('%','').length))),font=Math.min(11,Math.max(6.5,available/(longest*.57)));
+ wrap.style.setProperty('--rav-compact-font',font.toFixed(2)+'px');
+ const markup=`<table class="rav-table unified-matrix rav-unified" aria-label="Machine-wise RAV percentages"><colgroup><col style="width:14%">${cols.map(()=>`<col style="width:${colWidth}%">`).join('')}</colgroup><thead><tr><th scope="col" class="rav-machine-head"><span class="rav-full-value">Machines</span><span class="rav-compact-value">M/c</span></th>${cols.map(c=>`<th scope="col" class="${c.i<0?'rav-ytd':''}" title="${esc(c.label)}"><span class="rav-full-value">${esc(c.label)}</span><span class="rav-compact-value">${esc(c.short)}</span></th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr data-rav-machine="${esc(r.machine)}"><th scope="row" class="matrix-goal rav-machine">${esc(r.machine)}</th>${cols.map(c=>{const v=c.i<0?r.ytd:r.values[c.i],full=percentage(v);return `<td data-label="${esc(c.label)}" class="${c.i<0?'rav-ytd matrix-ytd':''}" ${c.i<0?'data-rav-ytd':`data-rav-value="${esc(c.label)}"`} title="${v==null?'Not reported':esc(full)}" aria-label="${esc(c.label+': '+(full||'Not reported'))}"><span class="rav-full-value">${esc(full)}</span><span class="rav-compact-value" aria-hidden="true">${esc(full.replace('%',''))}</span></td>`;}).join('')}</tr>`).join('')}</tbody></table>`;
+ wrap.innerHTML=rows.length?markup:'<div class="empty">No machine-wise RAV data available.</div>';
+ $('ravPeriod').textContent=report.year+' | '+(report.latest?'Latest reported: '+report.latest:'No monthly data reported');
+ if(report.invalid?.length){warning.hidden=false;warning.textContent='Non-numeric values omitted: '+report.invalid.map(x=>x.machine+' '+x.period).join(', ')+'. Please review the reported values.';}
+}
+function normJS(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g,'')}
+function paretoSvg(allEntries, exportOptions=null){
+ if(!allEntries.length)return '';
+ // Always a single vertical Pareto, even on narrow screens or with many incidents.
+ // Re-rank defensively and use one cumulative series across the entire dataset.
+ const entries=allEntries.slice().sort((a,b)=>b.hours-a.hours),n=entries.length,total=entries.reduce((sum,e)=>sum+e.hours,0);
+ let running=0;const cumulative=entries.map((e,i)=>{running+=e.hours;return total>0?(i===n-1?100:100*running/total):0;});
+ const report=reportWidth(),W=exportOptions?Math.max(280,Math.floor(exportOptions.width),n*13+84):Math.max(280,Math.floor(report-(report<450?74:106)),n*13+84),left=42,right=W-38,top=exportOptions?.compact?28:48,bottom=exportOptions?.compact?136:218,plotH=bottom-top,step=(right-left)/n,barW=Math.min(exportOptions?Math.min(112,Math.max(56,step*.35)):56,step*.72),max=Math.max(...entries.map(e=>e.hours)),maxY=max>0?max*1.16:1,y=v=>bottom-v/maxY*plotH,cy=v=>bottom-v/100*plotH,x=i=>left+(i+.5)*step;
+ const dense=step<88,small=step<30,font=dense?Math.min(11,Math.max(8,step*.70)):11,valueFont=small?Math.min(10,Math.max(8,step*.70)):11;
+ // Compact, upright labels for sparse charts; rotated labels for crowded charts.
+ // The complete description remains in the DT register and the SVG title.
+ const shorten=(str,len)=>str.length>len?str.slice(0,Math.max(1,len-1)).trimEnd()+'…':str;
+ function labelLines(value){const text=String(value||'').replace(/\s+/g,' ').trim();const limit=Math.max(12,Math.floor((step-8)/(font*.55)));let lines=[],line='';for(const word of text.split(' ')){for(let start=0;start<word.length;start+=limit){const part=word.slice(start,start+limit);if(line&&line.length+part.length+1>limit){lines.push(line);line='';}line+=(line?' ':'')+part;}}if(line)lines.push(line);if(lines.length>4){lines=lines.slice(0,4);lines[3]=shorten(lines[3]+'…',limit);}return lines;}
+ const labelData=entries.map(e=>dense?[shorten(String(e.description||'').replace(/\s+/g,' ').trim(),small?25:40)]:labelLines(e.description));
+ const labelDepth=dense?Math.max(60,...labelData.map(l=>l[0].length*font*.58+12)):Math.max(30,...labelData.map(l=>l.length*(font+3)+12));
+ const H=bottom+labelDepth+13;
+ let svg=`<svg class="pareto-svg pareto-single" viewBox="0 0 ${W} ${H}" role="img" aria-label="Downtime Pareto: ${n} descriptions, largest to smallest"><title>Downtime Pareto, largest to smallest</title><text x="${left}" y="12" font-size="10" fill="#52627a">DT hours</text><text x="${right}" y="12" text-anchor="end" font-size="10" fill="#8a6200">Cumulative %</text>`;
+ for(let i=0;i<=4;i++){const yy=bottom-i*plotH/4;svg+=`<line x1="${left}" x2="${right}" y1="${yy}" y2="${yy}" stroke="#e2e8f0"/><text x="${left-5}" y="${yy+3}" text-anchor="end" font-size="10" fill="#52627a">${fmt(maxY*i/4,maxY<5?2:1)}</text><text x="${right+5}" y="${yy+3}" font-size="10" fill="#8a6200">${i*25}%</text>`;}
+ svg+=`<line x1="${left}" x2="${right}" y1="${cy(80)}" y2="${cy(80)}" stroke="#b8860b" stroke-dasharray="4 4" opacity=".6"/>`;
+ entries.forEach((e,i)=>{const xx=x(i),yy=y(e.hours),label=fmt(e.hours,2);svg+=`<g data-pareto-rank="${i+1}" data-hours="${e.hours}" data-cumulative="${cumulative[i]}"><title>${esc(e.description)}: ${label} hours; ${fmt(cumulative[i],1)}% cumulative</title><rect class="pareto-bar" x="${xx-barW/2}" y="${yy}" width="${barW}" height="${bottom-yy}" fill="#165b85"/>${small?`<text x="0" y="0" transform="translate(${xx+valueFont*.3},${yy-4}) rotate(-90)" font-size="${valueFont}" font-weight="600" fill="#17354d">${label}</text>`:`<text x="${xx}" y="${yy-5}" text-anchor="middle" font-size="${valueFont}" font-weight="600" fill="#17354d">${label}</text>`}</g>`;});
+ svg+=`<polyline class="pareto-cumulative" points="${entries.map((e,i)=>`${x(i).toFixed(2)},${cy(cumulative[i]).toFixed(2)}`).join(' ')}" fill="none" stroke="#b8860b" stroke-width="2.5" stroke-linejoin="round"/>`;
+ entries.forEach((e,i)=>{svg+=`<circle cx="${x(i)}" cy="${cy(cumulative[i])}" r="${Math.min(3.5,step*.2)}" fill="#b8860b" stroke="#fff" stroke-width=".8"><title>${esc(e.description)}: ${fmt(cumulative[i],1)}% cumulative</title></circle>`;const lines=labelData[i];svg+=dense?`<text class="pareto-description" transform="translate(${x(i)+font*.3},${bottom+9}) rotate(90)" font-size="${font}" fill="#243e53"><title>${esc(e.description)}</title>${esc(lines[0])}</text>`:`<text class="pareto-description" x="${x(i)}" y="${bottom+font+5}" font-size="${font}" text-anchor="middle" fill="#243e53"><title>${esc(e.description)}</title>${lines.map((l,j)=>`<tspan x="${x(i)}" dy="${j?font+3:0}">${esc(l)}</tspan>`).join('')}</text>`;});
+ return `<div class="pareto-band single-sequence">${svg}</svg></div>`;
+}
+function currentDTTable(entries,machine,month){
+ if(!entries.length)return '';
+ const hasReason=entries.some(e=>e.reason),hasInstances=entries.some(e=>e.instances!=null),total=entries.reduce((sum,e)=>sum+e.hours,0),allInstances=entries.every(e=>e.instances!=null),instTotal=allInstances?entries.reduce((sum,e)=>sum+e.instances,0):null;
+ const headers=['Description',...(hasReason?['Reason']:[]),'DT hrs',...(hasInstances?['Instances']:[])];
+ const widths=hasReason? (hasInstances?[48,20,16,16]:[58,24,18]):(hasInstances?[68,16,16]:[80,20]);
+ const rows=entries.map(e=>`<tr data-dt-rank="${e.rank}"><td><span class="dt-rank">${e.rank}.</span> ${esc(e.description)}</td>${hasReason?`<td>${esc(e.reason||'-')}</td>`:''}<td>${fmt(e.hours,2)}</td>${hasInstances?`<td>${e.instances==null?'-':fmt(e.instances,0)}</td>`:''}</tr>`).join('');
+ return `<article class="incident-card incident-dt" data-incident="dt"><header class="incident-header"><h5>${esc(machine)} | Current Month DT Hours Description</h5><span>${esc(month)}</span></header><table class="incident-dt-table" aria-label="${esc(machine)} current month downtime descriptions"><colgroup>${widths.map(w=>`<col style="width:${w}%">`).join('')}</colgroup><thead><tr>${headers.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody><tfoot><tr><th scope="row">Total</th>${hasReason?'<td></td>':''}<td>${fmt(total,2)}</td>${hasInstances?`<td>${instTotal==null?'-':fmt(instTotal,0)}</td>`:''}</tr></tfoot></table></article>`;
+}
+function currentRCASection(rcas,machine){
+ const labels=['Why 1','Why 2','Why 3','Why 4','Why 5','Corrective Action','Preventive Action'];
+ return rcas.filter(r=>String(r.problem||'').trim()||(r.fields||[]).some(f=>String(f.value||'').trim())).slice().sort((a,b)=>a.slot-b.slot).slice(0,3).map(r=>{const values=new Map((r.fields||[]).map(f=>[f.label,f.value]));return `<article class="incident-card rca-investigation incident-rca-${r.slot}" data-incident="rca${r.slot}"><header class="incident-header"><h5>${esc(machine)} | RCA ${r.slot}</h5>${r.health?`<span>Health: ${esc(r.health)}</span>`:''}</header><div class="incident-problem"><strong>Top Problem ${r.slot}</strong>${r.problem?`<p>${esc(r.problem)}</p>`:''}${r.duration?`<small>Recorded duration: ${esc(r.duration)}</small>`:''}</div><table class="rca-field-table" aria-label="Top Problem ${r.slot} root cause and actions"><tbody>${labels.map(label=>`<tr><th scope="row">${esc(label)}</th><td>${esc(values.get(label)||'')}</td></tr>`).join('')}</tbody></table></article>`;}).join('');
+}
+function currentIncidentSection(entries,rcas,machine,month){
+ // Count only populated investigations, not empty workbook templates. Preserve original RCA slot labels.
+ const populated=rcas.filter(r=>String(r.problem||'').trim()||(r.fields||[]).some(f=>String(f.value||'').trim())).slice().sort((a,b)=>a.slot-b.slot).slice(0,3);
+ if(!entries.length&&!populated.length)return '';
+ const dt=currentDTTable(entries,machine,month);
+ const cards=dt+currentRCASection(populated,machine);
+ const layout=`incident-grid adaptive-incidents rca-count-${populated.length} ${dt?'with-dt':'without-dt'}`;
+ const heading=dt?(populated.length?'Current Month Downtime &amp; Root Cause Analysis':'Current Month Downtime Details'):'Current Month Root Cause Analysis';
+ // Pareto is always the final full-width block when there are DT entries.
+ const pareto=entries.length?`<div class="pareto-panel incident-pareto"><h4>${esc(machine)} | Downtime Pareto</h4><div class="pareto-scroll" role="region" aria-label="${esc(machine)} downtime Pareto">${paretoSvg(entries)}</div><div class="pareto-legend"><span><i></i> Downtime hours</span><span><i></i> Cumulative %</span></div></div>`:'';
+ return `<section class="machine-incidents" aria-label="${esc(machine)} current month downtime and root cause analysis" data-rca-count="${populated.length}"><div class="detail-heading"><h4>${heading}</h4><span>${esc(month)}</span></div><div class="${layout}">${cards}</div>${pareto}</section>`;
+}
+const CLASS_COLORS={good:'#00B050',bad:'#FF0000',target:'#002060',baseline:'#DBEFF9',available:'#6600CC',neutral:'#94a3b8'};
+function notOperated(q){return q?.operationStatus==='not-operated'||(q?.operationStatus==null&&q?.available===0&&!(q.dt>0)&&!(q.mttr>0));}
+function machineMetricClass(q,metric,target){return notOperated(q)?'not-operated':metric==='mtbf'?mtbfStatusClass(q,target):cls(q?.[metric],target);}
+function machineMetricText(q,metric){if(notOperated(q))return 'Not Operated';const v=metric==='mtbf'?mtbfDisplay(q):q?.[metric];return v==null?'Not Reported':metric==='dt'?pct(v):fmt(v);}
+function mtbfZeroDowntime(q){
+ return Number.isFinite(q?.available)&&q.available>0&&(q.dt===0||(q.dt==null&&q.dtHours===0))&&!(q.dtHours>0);
+}
+function mtbfDisplay(q){return mtbfZeroDowntime(q)?q.available:q?.mtbf??null;}
+function mtbfStatusClass(q,target){return mtbfZeroDowntime(q)?'good':cls(mtbfDisplay(q),target,false);}
+function classTrendData(machine,metric){
+ const target=machine.targets?.[metric]??null,baseline=machine.baseline||{},ytd=machine.ytd||{},isBF=metric==='mtbf';
+ // A confirmed non-operating period is plotted as zero, not a missing measurement.
+ // Keep the underlying data and YTD calculation untouched; never convert missing data to zero.
+ const rows=(machine.monthly||[]).map(m=>{
+  const idle=notOperated(m),zeroDT=mtbfZeroDowntime(m);
+  const value=idle?0:zeroDT?(isBF?m.available:0):m[metric]??null;
+  return {label:m.month.slice(0,3),kind:'month',value,available:m.available>0?m.available:null,zeroDT,notOperated:idle};
+ });
+ rows.push({label:'YTD-26',kind:'ytd',value:ytd[metric]??null,available:ytd.available>0?ytd.available:null,zeroDT:mtbfZeroDowntime(ytd)});
+ rows.push({label:'Target-26',kind:'target',value:target,available:null,zeroDT:false},{label:'2025',kind:'baseline',value:baseline[metric]??null,available:baseline.available>0?baseline.available:null,zeroDT:false});
+ return rows.map(r=>{let v=r.value;if(isBF&&r.zeroDT)v=r.available;const color=r.kind==='target'?CLASS_COLORS.target:r.kind==='baseline'?CLASS_COLORS.baseline:r.notOperated?CLASS_COLORS.neutral:isBF&&r.zeroDT?CLASS_COLORS.good:target==null||v==null?CLASS_COLORS.neutral:(isBF?v>=target:v<=target)?CLASS_COLORS.good:CLASS_COLORS.bad;return {...r,value:v,color,available:isBF?r.available:null};});
+}
+
+function horizontalTrendSVG(rows,metric,display,val,name){
+ const bf=metric==='mtbf',W=360,L=73,R=286,step=bf?53:36,T=18,H=T+rows.length*step+16,max=Math.max(1e-9,...rows.flatMap(r=>[val(r.value)||0,r.available||0])),scale=v=>Math.max(0,(v||0)/max*(R-L)),barH=bf?11:15;
+ let out=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${name} ${metric.toUpperCase()} complete performance trend"><title>${name} ${metric.toUpperCase()} complete trend</title>`;
+ rows.forEach((r,i)=>{const y=T+i*step,a=r.available,v=val(r.value);if(r.kind==='ytd')out+=`<line x1="6" x2="354" y1="${y-6}" y2="${y-6}" stroke="#b64141" stroke-dasharray="4 4"/>`;out+=`<text x="65" y="${y+(bf?17:11)}" text-anchor="end" fill="#334155" font-size="11">${esc(r.label)}</text>`;
+ const draw=(value,yy,color,label,extra='')=>`<rect x="${L}" y="${yy}" width="${Math.max(1,scale(value))}" height="${barH}" fill="${color}" ${extra}><title>${esc(r.label)}: ${esc(label)}</title></rect><text x="${L+scale(value)+4}" y="${yy+barH-1}" fill="#17354d" font-size="10" font-weight="600">${esc(label)}</text>`;
+ if(bf&&a!=null)out+=draw(a,y,CLASS_COLORS.available,fmt(a,1),`data-series="available" data-period="${esc(r.label)}"`);
+ const yy=y+(bf&&a!=null?barH+5:0);if(v!=null)out+=draw(v,yy,r.color,display(r.value),`data-period="${esc(r.label)}" data-kind="${r.kind}" data-value="${v}" data-zero-dt="${r.zeroDT}" data-operation-state="${r.notOperated?'not-operated':'reported'}"`);else out+=`<text x="${L}" y="${yy+12}" font-size="10" fill="#64748b" data-operation-state="${r.notOperated?'not-operated':'not-reported'}">${r.notOperated?'Not Operated':'N/A'}</text>`;
+ });return out+'</svg>';
+}
+function classTrendSVG(machine,metric){
+ const allRows=classTrendData(machine,metric),percent=metric==='dt'||metric==='waste',isBF=metric==='mtbf',val=v=>v==null?null:percent?v*100:v,display=v=>v==null?'N/A':fmt(val(v),percent?2:isBF?1:2)+(percent?'%':'');
+ const W=Math.max(210,Math.floor(reportWidth()-(reportWidth()<450?52:82))),H=REPORT_MODE?160:248,L=49,R=W-11,T=REPORT_MODE?19:28,B=REPORT_MODE?125:201,maxRaw=Math.max(0,...allRows.flatMap(r=>[val(r.value)||0,r.available||0])),max=maxRaw>0?maxRaw*1.2:1,y=v=>B-(v/max)*(B-T);
+ if(W<640 || (R-L)/allRows.length<(isBF?44:31))return horizontalTrendSVG(allRows,metric,display,val,esc(machine.machine));
+ const groupSize=allRows.length;
+ return [allRows].map(rows=>{const step=(R-L)/groupSize,x=i=>L+(i+.5)*step;
+ let svg=`<svg viewBox="0 0 ${W} ${H}"  role="img" aria-label="${esc(machine.machine)} ${metric.toUpperCase()} by period"><title>${esc(machine.machine)} ${metric.toUpperCase()} monthly actual, YTD, target and 2025</title>`;
+ for(let i=0;i<=4;i++){const v=max*i/4,yy=y(v);svg+=`<line x1="${L}" x2="${R}" y1="${yy}" y2="${yy}" stroke="#e2e8f0"/><text x="${L-6}" y="${yy+4}" text-anchor="end" font-size="11" fill="#52647a">${fmt(v,percent?1:isBF?0:1)}${percent?'%':''}</text>`;}
+ const firstSummary=rows.findIndex(r=>r.kind==='ytd');if(firstSummary>0)svg+=`<line x1="${L+step*firstSummary}" x2="${L+step*firstSummary}" y1="${T}" y2="${B}" stroke="#b64141" stroke-dasharray="4 4"/>`;
+ rows.forEach((r,i)=>{
+  const xx=x(i),v=val(r.value),a=r.available,barW=isBF?Math.min(21,step*.29):Math.min(34,step*.68),stroke=r.kind==='baseline'?'#90b4ca':r.color;
+  if(isBF&&a!=null){
+   const pairGap=Math.min(12,step*.17),singleW=barW,availX=xx-pairGap/2-singleW,actualX=xx+pairGap/2,yyA=y(a);
+   svg+=`<rect x="${availX}" y="${yyA}" width="${singleW}" height="${B-yyA}" fill="${CLASS_COLORS.available}" data-series="available" data-period="${esc(r.label)}"><title>${esc(r.label)} available hours: ${fmt(a,2)}</title></rect>`;
+   svg+=`<text x="${availX+singleW/2}" y="${Math.max(12,yyA-5)}" text-anchor="middle" font-size="10" fill="#4f1688">${fmt(a,1)}</text>`;
+   if(v!=null){
+    const yy=y(v),barH=Math.max(0,B-yy),labelFill=r.color===CLASS_COLORS.bad?'#8b0000':r.color===CLASS_COLORS.good?'#14532d':'#17354d';
+    svg+=`<rect data-period="${esc(r.label)}" data-kind="${r.kind}" data-value="${v}" data-zero-dt="${r.zeroDT}" data-operation-state="${r.notOperated?'not-operated':'reported'}" x="${actualX}" y="${v===0?B-1:yy}" width="${singleW}" height="${v===0?1:barH}" fill="${r.color}" stroke="${stroke}" stroke-width=".6"><title>${esc(r.label)} ${metric.toUpperCase()}: ${display(r.value)}${r.notOperated?' (Not Operated)':r.zeroDT?' (zero downtime; available hours)':''}</title></rect>`;
+    svg+=`<text x="${actualX+singleW/2}" y="${Math.max(12,yy-5)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="${labelFill}">${display(r.value)}</text>`;
+   }else{
+    svg+=`<text x="${actualX+singleW/2}" y="${B-8}" text-anchor="middle" font-size="10" fill="#64748b">N/A</text>`;
+   }
+  }else if(v!=null){
+   const yy=y(v),barH=Math.max(0,B-yy);
+   svg+=`<rect data-period="${esc(r.label)}" data-kind="${r.kind}" data-value="${v}" data-zero-dt="${r.zeroDT}" data-operation-state="${r.notOperated?'not-operated':'reported'}" x="${xx-barW/2}" y="${v===0?B-1:yy}" width="${barW}" height="${v===0?1:barH}" fill="${r.color}" stroke="${stroke}" stroke-width=".6"><title>${esc(r.label)} ${metric.toUpperCase()}: ${display(r.value)}${r.notOperated?' (Not Operated)':''}</title></rect>`;
+   svg+=`<text x="${xx}" y="${Math.max(12,yy-5)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="#17354d">${display(r.value)}</text>`;
+  }else{
+   svg+=r.notOperated?`<text x="${xx}" y="${B-20}" text-anchor="middle" font-size="9" fill="#64748b" data-operation-state="not-operated"><tspan x="${xx}">Not</tspan><tspan x="${xx}" dy="10">Operated</tspan></text>`:`<text x="${xx}" y="${B-8}" text-anchor="middle" font-size="10" fill="#64748b">N/A</text>`;
+  }
+  svg+=`<text x="${xx}" y="${B+16}" text-anchor="middle" font-size="10.5" fill="#334155">${esc(r.label)}</text>`;
+ });
+ return svg+'</svg>';}).join('');
+}
+function classPerformance(machine){
+ const specs=[['dt','DT %','Downtime'],['mttr','MTTR (hrs)','Mean time to repair'],['mtbf','MTBF (hrs)','Mean time between failures']];
+ const ratingClass=r=>r==='Unsatisfactory'?'bad':r==='PM'?'partial':r?'good':'neutral';
+ const leg=(c,t)=>`<span><i style="background:${c}"></i>${t}</span>`;
+ return `<section class="class-performance"><div class="class-performance-header"><h4>Machine Performance Trends</h4><span>2026 monthly actuals | YTD | Target | 2025</span></div><div class="class-perf-charts">${specs.map(([metric,title,desc])=>{const r=machine.ratings?.[metric]||null;return `<article class="class-perf-chart"><header><h5>${title}</h5>${metric!=='mtbf'?`<div class="class-rating ${ratingClass(r)}"><small>YTD rating</small>${esc(r||'Not reported')}</div>`:''}</header><div class="class-plot" tabindex="0" role="region" aria-label="${esc(machine.machine)} ${title} chart">${classTrendSVG(machine,metric)}</div><div class="class-swipe-hint"></div><div class="class-perf-legend">${leg(CLASS_COLORS.good,'On / better than target')}${leg(CLASS_COLORS.bad,'Missed target')}${leg(CLASS_COLORS.target,'Target-26')}${leg(CLASS_COLORS.baseline,'2025 actual')}${metric==='mtbf'?leg(CLASS_COLORS.available,'Available hours'):''}${(machine.monthly||[]).some(notOperated)?leg(CLASS_COLORS.neutral,'Not operated (0)'):''}</div><p>${metric==='mtbf'?'Zero downtime with positive available hours: MTBF equals available hours (green).': 'YTD rating follows the applicable rating criteria.'}${(machine.monthly||[]).some(notOperated)?' Non-operating months display 0; missing data remains N/A.':''}</p></article>`}).join('')}</div></section>`;
+}
+
+function renderClasses(){
+ if(!DATA?.classMachines)return;
+ const clsName=$('classSelect').value,month=DATA.currentMonth?.label||'',group=DATA.classMachines.find(x=>x.class===clsName)||{machines:[]},rows=group.machines;
+ $('classCurrentMonth').textContent=month;
+ $('classSummary').innerHTML=[card('Machine class','Class '+esc(clsName)),card('Reporting month',esc(month),'DT details and RCA: current month only'),card('Machines',rows.length),card('RCAs entered',rows.reduce((s,x)=>s+(x.currentRCA||[]).length,0),'Up to three per machine')].join('');
+ $('classMachineCards').innerHTML=rows.map(x=>{const cur=x.monthly.find(m=>m.month===month)||{},entries=x.currentDT||[],rcas=x.currentRCA||[],hasDetails=entries.length||rcas.length;return `<article class="machine-card ${hasDetails?'has-current-details':''}"><div class="machine-owner"><img src="${esc(reportAsset(x.photo))}" alt="${esc(x.owner)}"><div><h3>${esc(x.machine)}</h3><p>Machine Owner: ${esc(x.owner)}</p></div></div><div class="machine-metrics"><div class="machine-metric"><small>DT %</small><b class="${machineMetricClass(cur,'dt',x.targets.dt)}">${machineMetricText(cur,'dt')}</b><small>Target ${pct(x.targets.dt)}</small></div><div class="machine-metric"><small>MTTR (hrs)</small><b class="${machineMetricClass(cur,'mttr',x.targets.mttr)}">${machineMetricText(cur,'mttr')}</b><small>Target ${fmt(x.targets.mttr)}</small></div><div class="machine-metric"><small>MTBF (hrs)</small><b class="${machineMetricClass(cur,'mtbf',x.targets.mtbf)}">${machineMetricText(cur,'mtbf')}</b><small>Target ${fmt(x.targets.mtbf)}</small></div></div>${classPerformance(x)}${currentIncidentSection(entries,rcas,x.machine,month)}</article>`;}).join('');
+}
+function renderFI(){
+ if(!DATA)return;const fi=DATA.financialImpact,wrap=$('fiTable'),all=$('fiView').value==='all';
+ if(!fi?.rows?.length){wrap.innerHTML='<div class="empty">The Financial Impact report is unavailable.</div>';$('fiNote').textContent='';return;}
+ const safeColor=v=>/^#[0-9a-f]{6}$/i.test(v||'')?v:'';
+ const cellStyle=v=>`background-color:${safeColor(v?.background)||'#FFFFFF'};color:${safeColor(v?.color)||'#17243a'};font-weight:${v?.bold?'700':'500'}`;
+ const cols=fi.columns.map((c,i)=>({...c,i})).filter(c=>all||!c.hidden),rows=fi.rows.filter(r=>all||!r.hidden);
+ const summary=c=>/^YTD/i.test(c.label)?'fi-summary fi-ytd matrix-ytd':/^20\d{2}$/.test(c.label)?'fi-summary':'';
+ const head=`<thead><tr><th scope="col">${esc(fi.goalHeader||'Performance Goals')}</th>${cols.map(c=>`<th scope="col" class="${summary(c)}" style="${cellStyle(c.style)}" data-fi-period="${esc(c.label)}">${esc(c.label)}</th>`).join('')}</tr></thead>`;
+ const body=rows.map((r,i)=>{const first=i===0||rows[i-1].idGroup!==r.idGroup,rowClass=r.total?'fi-total':first?'fi-group-start':'fi-child';return `<tr class="${rowClass}" data-fi-row="${r.r+1}"><th scope="row" class="matrix-goal fi-goal" style="${cellStyle(r.goal.style)}">${first&&r.id.display?`<span class="kpi-num">${esc(r.id.display)}</span>`:''}${esc(r.goal.display.trim())}</th>${cols.map(c=>{const v=r.cells[c.i];return `<td data-label="${esc(c.label)}" class="${summary(c)}" data-fi-cell="${esc(v.address)}" data-error="${!!v.error}" style="${cellStyle(v.style)}" title="${esc(v.error?'Calculation error: '+v.display:v.value==null?'Not reported':v.display)}">${esc(v.display)}</td>`;}).join('')}</tr>`;}).join('');
+ wrap.classList.add('unified-matrix-wrap');wrap.innerHTML=`<table class="fi-table unified-matrix fi-unified" aria-label="U&amp;M Financial Impact in rupees million"><colgroup><col style="width:18%">${cols.map(()=>'<col>').join('')}</colgroup>${head}<tbody>${body}</tbody></table>`;
+ setMatrixMode(wrap,Math.max(720,cols.length*51+140));
+ const reported=fi.columns.filter((c,i)=>/(?:[A-Za-z]+[- ]\d{2,4})$/.test(c.label)&&!/^YTD/i.test(c.label)&&fi.rows.some(r=>!r.hidden&&typeof r.cells[i]?.value==='number')).at(-1)?.label;
+ $('fiPeriodNote').textContent='Rs. million'+(reported?' | Latest data: '+reported:'');
+ $('fiNote').textContent='Negative amounts are shown in brackets. '+(all?'Additional rows and periods included. ':'Standard reporting rows and periods displayed. ');
+}
+let refreshInFlight=false;
+function refreshStatus(){$('stamp').dataset.error='false';$('stamp').dataset.state='ready';$('stamp').textContent='Published: '+new Date(DATA.publishedAt).toLocaleString('en-PK',{timeZone:'Asia/Karachi'})+' PKT | Saved snapshot';}
+async function refresh(){if(refreshInFlight)return;refreshInFlight=true;const button=$('refreshButton');button.disabled=true;button.setAttribute('aria-busy','true');$('refreshLabel').textContent='Refreshing';$('stamp').dataset.state='loading';try{const response=await fetch('./data.json?ts='+Date.now(),{cache:'no-store'});const d=await response.json();if(!response.ok||d.error)throw Error(d.error||'Unable to load data');const changed=!DATA||!d.revision||d.revision!==DATA.revision;if(changed){DATA=d;init();}refreshStatus();}catch(e){console.error('Dashboard refresh failed:',e);$('stamp').dataset.error='true';$('stamp').dataset.state='error';$('stamp').textContent=(DATA?'Refresh failed. Showing last loaded data.':'Unable to load data. Please check the data connection and refresh.');}finally{refreshInFlight=false;button.disabled=false;button.removeAttribute('aria-busy');$('refreshLabel').textContent='Refresh Data';}}
+const navButtons=[...document.querySelectorAll('#nav button')];
+$('mobileTab').innerHTML=navButtons.map(b=>`<option value="${esc(b.dataset.tab)}">${esc(b.textContent.trim())}</option>`).join('');$('mobileTab').value=activeTab();
+const sectionDescriptions={overview:'Monthly performance, YTD results and KPI ratings',reliability:'Machine-wise DT%, MTTR and MTBF against targets',pm:'Planned, completed and pending preventive maintenance jobs',rm:'Repair and maintenance cost and budget performance',waste:'Gross wastage by line and total performance',rav:'Machine-wise replacement asset value percentages',classes:'Machine performance trends, downtime Pareto and RCAs',fi:'Financial impact by performance goal and reporting period'};
+function switchTab(tab){const b=navButtons.find(x=>x.dataset.tab===tab);if(!b||tab===activeTab())return;navButtons.forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current');});document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));b.classList.add('active');b.setAttribute('aria-current','page');$(tab).classList.add('active');$('pageTitle').textContent=b.textContent.trim();$('pageSubtitle').textContent=sectionDescriptions[tab];$('mobileTab').value=tab;renderActive();window.scrollTo({top:0,behavior:'instant'});}
+navButtons.forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));$('mobileTab').addEventListener('change',()=>switchTab($('mobileTab').value));
+
+// Reflow at the actual report width; no internal scrolling or page navigation.
+let reflowTimer=0,lastReportWidth=0;
+function reflowReport(){if(REPORT_MODE)return;const width=$(''+activeTab()).clientWidth;if(!DATA||Math.abs(width-lastReportWidth)<2)return;lastReportWidth=width;renderActive();}
+window.addEventListener('resize',()=>{clearTimeout(reflowTimer);reflowTimer=setTimeout(reflowReport,140);},{passive:true});
+if(REPORT_MODE){buildExportReport();}else{refresh();setInterval(()=>{if(!document.hidden)refresh();},30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});}
+</script></body></html>
